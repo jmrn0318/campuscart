@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campus Cart</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============ ICON LIBRARY ============ -->
+<svg style="display:none;">
+  <symbol id="icon-cart" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></symbol>
+  <symbol id="icon-mail" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m2 7 10 6 10-6"></path></symbol>
+  <symbol id="icon-lock" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V7a4 4 0 0 1 8 0v4"></path></symbol>
+  <symbol id="icon-user" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"></path></symbol>
+  <symbol id="icon-store" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9 4 4h16l1 5"></path><path d="M4 9h16v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9Z"></path><path d="M9 20v-6h6v6"></path></symbol>
+  <symbol id="icon-eye" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"></path><circle cx="12" cy="12" r="3"></circle></symbol>
+  <symbol id="icon-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></symbol>
+  <symbol id="icon-arrow-left" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="m11 18-6-6 6-6"></path></symbol>
+  <symbol id="icon-x" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></symbol>
+  <symbol id="icon-shield" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 8.7 8 11 4.6-2.3 8-6 8-11V5l-8-3Z"></path></symbol>
+  <symbol id="icon-phone" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92Z"></path></symbol>
+  <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></symbol>
+  <symbol id="icon-check-circle" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></symbol>
+  <symbol id="icon-chevron-down" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></symbol>
+</svg>
+
+<!-- ============ HEADER ============ -->
+<header id="site-header">
+  <div class="logo">
+    <span class="logo-icon"><svg><use href="#icon-cart"></use></svg></span>
+    Campus Cart
+  </div>
+  <nav>
+    <a href="#home" class="nav-link active" data-target="home">Home</a>
+    <a href="#how-it-works" class="nav-link" data-target="how-it-works">How It Works</a>
+    <a href="#about" class="nav-link" data-target="about">About</a>
+  </nav>
+  <div class="header-actions">
+    <button class="btn btn-outline" onclick="openRoleSelect('login')">Login</button>
+    <button class="btn btn-green" onclick="openRoleSelect('signup')">Sign Up</button>
+  </div>
+</header>
+
+<!-- ============ HOME / HERO ============ -->
+<section class="hero" id="home">
+  <div class="hero-copy reveal-up">
+    <div class="eyebrow">CAMPUS CART</div>
+    <h1 class="headline">Good Food,<br><span>Made Easier</span></h1>
+    <p>Pre-order your favorite meals, skip the long lines, and enjoy a faster, safer, and more convenient campus food experience.</p>
+    <div class="hero-buttons">
+      <button class="btn btn-green" onclick="openRoleSelect('signup')">Get Started <svg><use href="#icon-arrow"></use></svg></button>
+    </div>
+  </div>
+
+  <a href="#how-it-works" class="scroll-cue nav-link" data-target="how-it-works" aria-label="Scroll to how it works">
+    <svg><use href="#icon-chevron-down"></use></svg>
+  </a>
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section class="section section-alt" id="how-it-works">
+  <div class="section-inner">
+    <div class="section-head reveal">
+      <div class="eyebrow eyebrow-dark">HOW IT WORKS</div>
+      <h2>Three steps to your meal</h2>
+    </div>
+
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">01</div>
+        <h3>Order online</h3>
+        <p>Browse the menu and pre-order your meal in a few taps, right from your phone.</p>
+      </div>
+      <div class="step reveal" style="transition-delay:.08s">
+        <div class="step-num">02</div>
+        <h3>Pay securely</h3>
+        <p>Confirm your order and pay through the app — no more counting coins in line.</p>
+      </div>
+      <div class="step reveal" style="transition-delay:.16s">
+        <div class="step-num">03</div>
+        <h3>Pick up &amp; go</h3>
+        <p>Skip the queue and grab your order at the counter the moment it's ready.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section class="section" id="about">
+  <div class="section-inner about-grid">
+    <div class="reveal">
+      <div class="eyebrow eyebrow-dark">ABOUT CAMPUS CART</div>
+      <h2>Built for busy students, run by your campus canteens</h2>
+      <p class="section-sub">Campus Cart connects students directly with the canteens on campus, so ordering is faster and lines are shorter for everyone. Every participating canteen manages its own menu and orders through its own dashboard.</p>
+    </div>
+    <div class="stats reveal" style="transition-delay:.1s">
+      <div class="stat"><div class="stat-num" data-count="2">0</div><div class="stat-label">Campus canteens</div></div>
+      <div class="stat"><div class="stat-num" data-count="500">0</div><div class="stat-label">Students served</div></div>
+      <div class="stat"><div class="stat-num" data-count="5">0</div><div class="stat-label">Min. avg pickup</div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="logo"><span class="logo-icon"><svg><use href="#icon-cart"></use></svg></span> Campus Cart</div>
+    <div class="footer-links">
+      <a href="#home" class="nav-link" data-target="home">Home</a>
+      <a href="#how-it-works" class="nav-link" data-target="how-it-works">How It Works</a>
+      <a href="#about" class="nav-link" data-target="about">About</a>
+    </div>
+    <p class="footer-copy">&copy; 2026 Campus Cart. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- ============ ROLE SELECT OVERLAY ============ -->
+<div class="overlay" id="role-overlay" onclick="if(event.target===this) closeAllOverlays()">
+  <div class="modal-wrap role-modal">
+    <button class="close-btn" onclick="closeAllOverlays()"><svg><use href="#icon-x"></use></svg></button>
+    <div class="modal-brand"><span class="logo-icon"><svg><use href="#icon-cart"></use></svg></span> Campus Cart</div>
+    <h2 id="role-title">Continue as...</h2>
+    <p class="subtitle">Choose your account type to continue.</p>
+    <div class="role-cards">
+      <button class="role-card" onclick="selectRole('student')">
+        <span class="role-icon"><svg><use href="#icon-user"></use></svg></span>
+        <span class="role-name">Student</span>
+        <span class="role-desc">Order meals &amp; skip the line</span>
+      </button>
+      <button class="role-card" onclick="selectRole('canteen')">
+        <span class="role-icon"><svg><use href="#icon-store"></use></svg></span>
+        <span class="role-name">Canteen</span>
+        <span class="role-desc">Manage your canteen's orders</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ STUDENT AUTH OVERLAY ============ -->
+<div class="overlay" id="student-overlay" onclick="if(event.target===this) closeAllOverlays()">
+
+  <div class="modal-wrap" id="view-student-login" style="display:none;">
+    <button class="back-btn" onclick="backToRoleSelect()"><svg><use href="#icon-arrow-left"></use></svg></button>
+    <button class="close-btn" onclick="closeAllOverlays()"><svg><use href="#icon-x"></use></svg></button>
+    <div class="modal-brand"><span class="logo-icon"><svg><use href="#icon-user"></use></svg></span> Student Account</div>
+    <h2>Welcome Back!</h2>
+    <p class="subtitle">Sign in to your Campus Cart account to order ahead and skip the line.</p>
+    <p class="form-error" id="student-login-error"></p>
+
+    <form id="student-login-form" onsubmit="return studentLogin(event)" novalidate>
+      <div class="field">
+        <label>Email Address</label>
+        <div class="input-wrap"><span class="icon"><svg><use href="#icon-mail"></use></svg></span><input type="email" id="student-login-email" placeholder="Enter your email" required></div>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <div class="input-wrap"><span class="icon"><svg><use href="#icon-lock"></use></svg></span><input type="password" id="student-login-password" placeholder="Enter your password" required><button type="button" class="eye"><svg><use href="#icon-eye"></use></svg></button></div>
+      </div>
+      <div class="row-between"><a href="#" onclick="showAuthView('student-forgot');return false;">Forgot password?</a></div>
+      <button type="submit" class="btn btn-green btn-block">Login <svg><use href="#icon-arrow"></use></svg></button>
+    </form>
+    <p class="foot-link">Don't have an account? <a href="#" onclick="showAuthView('student-signup');return false;">Sign Up</a></p>
+  </div>
+
+  <div class="modal-wrap" id="view-student-signup" style="display:none;">
+    <button class="back-btn" onclick="backToRoleSelect()"><svg><use href="#icon-arrow-left"></use></svg></button>
+    <button class="close-btn" onclick="closeAllOverlays()"><svg><use href="#icon-x"></use></svg></button>
+    <div class="modal-brand"><span class="logo-icon"><svg><use href="#icon-user"></use></svg></span> Student Account</div>
+
+    <!-- Panel 1: the signup form -->
+    <div id="student-signup-form-wrap">
+      <h2>Create Your Account</h2>
+      <p class="subtitle">Join Campus Cart and enjoy convenient, hassle-free food ordering.</p>
+      <p class="form-error" id="student-signup-error"></p>
+
+      <form id="student-signup-form" onsubmit="return studentSignupStart(event)" novalidate>
+        <div class="field">
+          <label>Full Name</label>
+          <div class="input-wrap"><span class="icon"><svg><use href="#icon-user"></use></svg></span><input type="text" id="student-signup-name" placeholder="Enter your full name" required></div>
+        </div>
+        <div class="field">
+          <label>Email Address</label>
+          <div class="input-wrap"><span class="icon"><svg><use href="#icon-mail"></use></svg></span><input type="email" id="student-signup-email" placeholder="Enter your Gmail address" required></div>
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <div class="input-wrap"><span class="icon"><svg><use href="#icon-lock"></use></svg></span><input type="password" id="student-signup-password" placeholder="Create a password" minlength="6" required><button type="button" class="eye"><svg><use href="#icon-eye"></use></svg></button></div>
+          <p class="field-hint">Hindi bababa sa 6 characters.</p>
+        </div>
+        <div class="field">
+          <label>Confirm Password</label>
+          <div class="input-wrap"><span class="icon"><svg><use href="#icon-lock"></use></svg></span><input type="password" id="student-signup-confirm" placeholder="Confirm your password" minlength="6" required><button type="button" class="eye"><svg><use href="#icon-eye"></use></svg></button></div>
+        </div>
+        <button type="submit" class="btn btn-green btn-block">Create Account <svg><use href="#icon-arrow"></use></svg></button>
+      </form>
+      <p class="foot-link">Already have an account? <a href="#" onclick="showAuthView('student-login');return false;">Login</a></p>
+    </div>
+
+    <!-- Panel 2: enter the code that arrived in Gmail -->
+    <div id="student-verify-panel" style="display:none;">
+      <div class="lock-badge"><svg><use href="#icon-shield"></use></svg></div>
+      <h2>Ilagay ang Verification Code</h2>
+      <p class="subtitle">Nagpadala kami ng 6-digit code sa <strong id="student-verify-email-label"></strong>. Buksan ang Gmail app o inbox mo at ilagay ang code dito.</p>
+      <p class="form-error" id="student-verify-error"></p>
+
+      <form id="student-verify-form" onsubmit="return studentVerifyCode(event)" novalidate>
+        <div class="field">
+          <label>6-Digit Code</label>
+          <input type="text" id="student-verify-code" class="code-input" maxlength="6" inputmode="numeric" pattern="[0-9]*" placeholder="000000" autocomplete="one-time-code" required>
+        </div>
+        <button type="submit" class="btn btn-green btn-block">I-verify ang Code <svg><use href="#icon-arrow"></use></svg></button>
+      </form>
+      <p class="foot-link">
+        Walang natanggap? <a href="#" id="student-resend-link" onclick="resendStudentCode();return false;">I-resend ang code</a>
+      </p>
+      <p class="foot-link"><a href="#" onclick="showAuthView('student-signup');return false;"><svg style="display:inline;width:12px;height:12px;vertical-align:middle;"><use href="#icon-arrow-left"></use></svg> Baguhin ang email</a></p>
+    </div>
+
+    <!-- Panel 3: done -->
+    <div id="student-success-panel" class="success-state" style="display:none;">
+      <div class="lock-badge success-badge"><svg><use href="#icon-check-circle"></use></svg></div>
+      <h2 id="student-success-title">Verified!</h2>
+      <p class="subtitle">Nagawa na ang account mo. Pwede ka nang mag-login.</p>
+      <button class="btn btn-green btn-block" onclick="showAuthView('student-login')">Pumunta sa Login <svg><use href="#icon-arrow"></use></svg></button>
+    </div>
+  </div>
+
+  <div class="modal-wrap" id="view-student-forgot" style="display:none;">
+    <button class="back-btn" onclick="backToRoleSelect()"><svg><use href="#icon-arrow-left"></use></svg></button>
+    <button class="close-btn" onclick="closeAllOverlays()"><svg><use href="#icon-x"></use></svg></button>
+    <div class="modal-brand"><span class="logo-icon"><svg><use href="#icon-user"></use></svg></span> Student Account</div>
+
+    <!-- STEP 1: ENTER EMAIL -->
+    <div id="student-forgot-email-panel">
+      <div class="lock-badge"><svg><use href="#icon-lock"></use></svg></div>
+      <h2>Forgot Password?</h2>
+      <p class="subtitle">Enter your email address and we'll send a 6-digit verification code to your Gmail.</p>
+      <p class="form-error" id="student-forgot-error"></p>
+
+      <form id="student-forgot-form" onsubmit="return studentForgotPassword(event)" novalidate>
+        <div class="field">
+          <label>Email Address</label>
+          <div class="input-wrap"><span class="icon"><svg><use href="#icon-mail"></use></svg></span><input type="email" id="student-forgot-email" placeholder="Enter your email address" autocomplete="email" required></div>
+        </div>
+        <button type="submit" class="btn btn-green btn-block">Send Code <svg><use href="#icon-arrow"></use></svg></button>
+      </form>
+
+      <p class="foot-link"><a href="#" onclick="showAuthView('student-login');return false;"><svg style="display:inline;width:12px;height:12px;vertical-align:middle;"><use href="#icon-arrow-left"></use></svg> Back to Login</a></p>
+    </div>
+
+    <!-- STEP 2: VERIFY CODE -->
+    <div id="student-forgot-code-panel" style="display:none;">
+      <div class="lock-badge"><svg><use href="#icon-shield"></use></svg></div>
+      <h2>Verify Your Code</h2>
+      <p class="subtitle">We sent a 6-digit code to <strong id="student-forgot-email-label"></strong>. Check your Gmail and enter the code below.</p>
+      <p class="form-error" id="student-forgot-code-error"></p>
+
+      <form id="student-forgot-code-form" onsubmit="return verifyStudentForgotCode(event)" novalidate>
+        <div class="field">
+          <label>6-Digit Code</label>
+          <input type="text" id="student-forgot-code" class="code-input" maxlength="6" inputmode="numeric" pattern="[0-9]*" placeholder="000000" autocomplete="one-time-code" required>
+        </div>
+        <button type="submit" class="btn btn-green btn-block">Verify Code <svg><use href="#icon-arrow"></use></svg></button>
+      </form>
+
+      <p class="resend-code">Didn't receive the code? <a href="#" id="student-forgot-resend" onclick="resendStudentForgotCode();return false;">Resend Code</a></p>
+      <p class="foot-link"><a href="#" onclick="showStudentForgotEmailPanel();return false;"><svg style="display:inline;width:12px;height:12px;vertical-align:middle;"><use href="#icon-arrow-left"></use></svg> Change Email</a></p>
+    </div>
+
+    <!-- STEP 3: NEW PASSWORD -->
+    <div id="student-forgot-password-panel" style="display:none;">
+      <div class="lock-badge"><svg><use href="#icon-lock"></use></svg></div>
+      <h2>New Password</h2>
+      <p class="subtitle">Create a new password for your student account.</p>
+      <p class="form-error" id="student-new-password-error"></p>
+
+      <form id="student-new-password-form" onsubmit="return saveStudentNewPassword(event)" novalidate>
+        <div class="field">
+          <label>New Password</label>
+          <div class="input-wrap"><span class="icon"><svg><use href="#icon-lock"></use></svg></span><input type="password" id="student-new-password" placeholder="Create a new password" minlength="6" autocomplete="new-password" required><button type="button" class="eye"><svg><use href="#icon-eye"></use></svg></button></div>
+          <p class="field-hint">Password must be at least 6 characters.</p>
+        </div>
+        <div class="field">
+          <label>Confirm New Password</label>
+          <div class="input-wrap"><span class="icon"><svg><use href="#icon-lock"></use></svg></span><input type="password" id="student-confirm-new-password" placeholder="Confirm your new password" minlength="6" autocomplete="new-password" required><button type="button" class="eye"><svg><use href="#icon-eye"></use></svg></button></div>
+        </div>
+        <button type="submit" class="btn btn-green btn-block">Change Password <svg><use href="#icon-check"></use></svg></button>
+      </form>
+    </div>
+
+    <!-- STEP 4: SUCCESS -->
+    <div id="student-forgot-success-panel" class="password-success" style="display:none;">
+      <div class="lock-badge success-badge"><svg><use href="#icon-check-circle"></use></svg></div>
+      <h2>Password Changed!</h2>
+      <p class="subtitle">Your password has been successfully updated. You can now log in using your new password.</p>
+      <button class="btn btn-green btn-block" onclick="showAuthView('student-login')">Back to Login <svg><use href="#icon-arrow"></use></svg></button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ CANTEEN AUTH OVERLAY ============ -->
+<div class="overlay" id="canteen-overlay" onclick="if(event.target===this) closeAllOverlays()">
+
+  <div class="modal-wrap" id="view-canteen-login" style="display:none;">
+    <button class="back-btn" onclick="backToRoleSelect()"><svg><use href="#icon-arrow-left"></use></svg></button>
+    <button class="close-btn" onclick="closeAllOverlays()"><svg><use href="#icon-x"></use></svg></button>
+    <div class="modal-brand"><span class="logo-icon"><svg><use href="#icon-store"></use></svg></span> Canteen Account</div>
+    <h2>Canteen Login</h2>
+    <p class="subtitle">Sign in to manage your canteen's menu and incoming orders.</p>
+    <p class="form-error" id="canteen-login-error"></p>
+
+    <form id="canteen-login-form" onsubmit="return canteenLogin(event)" novalidate>
+      <div class="field">
+        <label>Canteen Email</label>
+        <div class="input-wrap"><span class="icon"><svg><use href="#icon-mail"></use></svg></span><input type="email" id="canteen-login-email" placeholder="Enter your canteen email" required></div>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <div class="input-wrap"><span class="icon"><svg><use href="#icon-lock"></use></svg></span><input type="password" id="canteen-login-password" placeholder="Enter your password" required><button type="button" class="eye"><svg><use href="#icon-eye"></use></svg></button></div>
+      </div>
+      <div class="row-between"><a href="#" onclick="showAuthView('canteen-forgot');return false;">Forgot password?</a></div>
+      <button type="submit" class="btn btn-green btn-block">Login <svg><use href="#icon-arrow"></use></svg></button>
+    </form>
+    <p class="foot-link">Don't have a canteen account yet? <a href="#" onclick="showAuthView('canteen-signup');return false;">Sign Up</a></p>
+  </div>
+
+  <div class="modal-wrap" id="view-canteen-signup" style="display:none;">
+    <button class="back-btn" onclick="backToRoleSelect()"><svg><use href="#icon-arrow-left"></use></svg></button>
+    <button class="close-btn" onclick="closeAllOverlays()"><svg><use href="#icon-x"></use></svg></button>
+    <div class="modal-brand"><span class="logo-icon"><svg><use href="#icon-store"></use></svg></span> Canteen Account</div>
+
+    <!-- Panel 1: the signup form -->
+    <div id="canteen-signup-form-wrap">
+      <h2>Register Your Canteen</h2>
+      <p class="subtitle">Each canteen gets its own account. New canteens can register anytime using the shared verification code from the school admin.</p>
+      <p class="form-error" id="canteen-signup-error"></p>
+
+      <form id="canteen-signup-form" onsubmit="return canteenSignupStart(event)" novalidate>
+        <div class="field">
+          <label>Canteen Name</label>
+          <div class="input-wrap"><span class="icon"><svg><use href="#icon-store"></use></svg></span><input type="text" id="canteen-name" placeholder="e.g. Canteen ni Primo" required></div>
+        </div>
+        <div class="field">
+          <label>Owner / Contact Person</label>
+          <div class="input-wrap"><span class="icon"><svg><use href="#icon-user"></use></svg></span><input type="text" id="canteen-owner" placeholder="e.g. Juan Dela Cruz" required></div>
+        </div>
+        <div class="field">
+          <label>Canteen Contact Number</label>
+          <div class="input-wrap"><span class="icon"><svg><use href="#icon-phone"></use></svg></span><input type="tel" id="canteen-contact" placeholder="e.g. 0917 123 4567" required></div>
+        </div>
+        <div class="field">
+          <label>Canteen Email</label>
+          <div class="input-wrap"><span class="icon"><svg><use href="#icon-mail"></use></svg></span><input type="email" id="canteen-email" placeholder="Enter canteen email" required></div>
+        </div>
+        <div class="field">
+          <label>Canteen Password</label>
+          <div class="input-wrap"><span class="icon"><svg><use href="#icon-lock"></use></svg></span><input type="password" id="canteen-password" placeholder="Create a password" minlength="6" required><button type="button" class="eye"><svg><use href="#icon-eye"></use></svg></button></div>
+          <p class="field-hint">Hindi bababa sa 6 characters.</p>
+        </div>
+        <div class="field">
+          <label>Confirm Password</label>
+          <div class="input-wrap"><span class="icon"><svg><use href="#icon-lock"></use></svg></span><input type="password" id="canteen-confirm" placeholder="Confirm your password" minlength="6" required><button type="button" class="eye"><svg><use href="#icon-eye"></use></svg></button></div>
+        </div>
+        <div class="field">
+          <label>Verification Code</label>
+          <div class="input-wrap"><span class="icon"><svg><use href="#icon-shield"></use></svg></span><input type="text" id="canteen-pin" placeholder="Shared code from school admin" required></div>
+          <p class="field-hint">This is the same code for every canteen — it just confirms you're an authorized school canteen. Ask the admin if you don't have it.</p>
+          <p class="field-error" id="canteen-pin-error">Incorrect verification code. Please check with the school admin.</p>
+        </div>
+        <button type="submit" class="btn btn-green btn-block">Create Canteen Account <svg><use href="#icon-arrow"></use></svg></button>
+      </form>
+      <p class="foot-link">Already have a canteen account? <a href="#" onclick="showAuthView('canteen-login');return false;">Login</a></p>
+    </div>
+
+    <!-- Panel 2: enter the code that arrived in Gmail -->
+    <div id="canteen-verify-panel" style="display:none;">
+      <div class="lock-badge"><svg><use href="#icon-shield"></use></svg></div>
+      <h2>Ilagay ang Verification Code</h2>
+      <p class="subtitle">Nagpadala kami ng 6-digit code sa <strong id="canteen-verify-email-label"></strong>. Buksan ang Gmail at ilagay ang code dito.</p>
+      <p class="form-error" id="canteen-verify-error"></p>
+
+      <form id="canteen-verify-form" onsubmit="return canteenVerifyCode(event)" novalidate>
+        <div class="field">
+          <label>6-Digit Code</label>
+          <input type="text" id="canteen-verify-code" class="code-input" maxlength="6" inputmode="numeric" pattern="[0-9]*" placeholder="000000" autocomplete="one-time-code" required>
+        </div>
+        <button type="submit" class="btn btn-green btn-block">I-verify ang Code <svg><use href="#icon-arrow"></use></svg></button>
+      </form>
+      <p class="foot-link">
+        Walang natanggap? <a href="#" id="canteen-resend-link" onclick="resendCanteenCode();return false;">I-resend ang code</a>
+      </p>
+      <p class="foot-link"><a href="#" onclick="showAuthView('canteen-signup');return false;"><svg style="display:inline;width:12px;height:12px;vertical-align:middle;"><use href="#icon-arrow-left"></use></svg> Baguhin ang email</a></p>
+    </div>
+
+    <!-- Panel 3: done -->
+    <div id="canteen-success" class="success-state" style="display:none;">
+      <div class="lock-badge success-badge"><svg><use href="#icon-check-circle"></use></svg></div>
+      <h2 id="canteen-success-title">Canteen account created!</h2>
+      <p class="subtitle">Verified na ang email ng canteen. Pwede ka nang mag-login.</p>
+      <button class="btn btn-green btn-block" onclick="showAuthView('canteen-login')">Go to Canteen Login <svg><use href="#icon-arrow"></use></svg></button>
+    </div>
+  </div>
+
+  <div class="modal-wrap" id="view-canteen-forgot" style="display:none;">
+    <button class="back-btn" onclick="backToRoleSelect()"><svg><use href="#icon-arrow-left"></use></svg></button>
+    <button class="close-btn" onclick="closeAllOverlays()"><svg><use href="#icon-x"></use></svg></button>
+    <div class="modal-brand"><span class="logo-icon"><svg><use href="#icon-store"></use></svg></span> Canteen Account</div>
+
+    <!-- STEP 1: ENTER EMAIL -->
+    <div id="canteen-forgot-email-panel">
+      <div class="lock-badge"><svg><use href="#icon-lock"></use></svg></div>
+      <h2>Forgot Password?</h2>
+      <p class="subtitle">Enter your canteen email and we'll send a 6-digit verification code to your Gmail.</p>
+      <p class="form-error" id="canteen-forgot-error"></p>
+
+      <form id="canteen-forgot-form" onsubmit="return canteenForgotPassword(event)" novalidate>
+        <div class="field">
+          <label>Canteen Email</label>
+          <div class="input-wrap"><span class="icon"><svg><use href="#icon-mail"></use></svg></span><input type="email" id="canteen-forgot-email" placeholder="Enter your canteen email" autocomplete="email" required></div>
+        </div>
+        <button type="submit" class="btn btn-green btn-block">Send Code <svg><use href="#icon-arrow"></use></svg></button>
+      </form>
+
+      <p class="foot-link"><a href="#" onclick="showAuthView('canteen-login');return false;"><svg style="display:inline;width:12px;height:12px;vertical-align:middle;"><use href="#icon-arrow-left"></use></svg> Back to Login</a></p>
+    </div>
+
+    <!-- STEP 2: VERIFY CODE -->
+    <div id="canteen-forgot-code-panel" style="display:none;">
+      <div class="lock-badge"><svg><use href="#icon-shield"></use></svg></div>
+      <h2>Verify Your Code</h2>
+      <p class="subtitle">We sent a 6-digit code to <strong id="canteen-forgot-email-label"></strong>. Check your Gmail and enter the code below.</p>
+      <p class="form-error" id="canteen-forgot-code-error"></p>
+
+      <form id="canteen-forgot-code-form" onsubmit="return verifyCanteenForgotCode(event)" novalidate>
+        <div class="field">
+          <label>6-Digit Code</label>
+          <input type="text" id="canteen-forgot-code" class="code-input" maxlength="6" inputmode="numeric" pattern="[0-9]*" placeholder="000000" autocomplete="one-time-code" required>
+        </div>
+        <button type="submit" class="btn btn-green btn-block">Verify Code <svg><use href="#icon-arrow"></use></svg></button>
+      </form>
+
+      <p class="resend-code">Didn't receive the code? <a href="#" id="canteen-forgot-resend" onclick="resendCanteenForgotCode();return false;">Resend Code</a></p>
+      <p class="foot-link"><a href="#" onclick="showCanteenForgotEmailPanel();return false;"><svg style="display:inline;width:12px;height:12px;vertical-align:middle;"><use href="#icon-arrow-left"></use></svg> Change Email</a></p>
+    </div>
+
+    <!-- STEP 3: NEW PASSWORD -->
+    <div id="canteen-forgot-password-panel" style="display:none;">
+      <div class="lock-badge"><svg><use href="#icon-lock"></use></svg></div>
+      <h2>New Password</h2>
+      <p class="subtitle">Create a new password for your canteen account.</p>
+      <p class="form-error" id="canteen-new-password-error"></p>
+
+      <form id="canteen-new-password-form" onsubmit="return saveCanteenNewPassword(event)" novalidate>
+        <div class="field">
+          <label>New Password</label>
+          <div class="input-wrap"><span class="icon"><svg><use href="#icon-lock"></use></svg></span><input type="password" id="canteen-new-password" placeholder="Create a new password" minlength="6" autocomplete="new-password" required><button type="button" class="eye"><svg><use href="#icon-eye"></use></svg></button></div>
+          <p class="field-hint">Password must be at least 6 characters.</p>
+        </div>
+        <div class="field">
+          <label>Confirm New Password</label>
+          <div class="input-wrap"><span class="icon"><svg><use href="#icon-lock"></use></svg></span><input type="password" id="canteen-confirm-new-password" placeholder="Confirm your new password" minlength="6" autocomplete="new-password" required><button type="button" class="eye"><svg><use href="#icon-eye"></use></svg></button></div>
+        </div>
+        <button type="submit" class="btn btn-green btn-block">Change Password <svg><use href="#icon-check"></use></svg></button>
+      </form>
+    </div>
+
+    <!-- STEP 4: SUCCESS -->
+    <div id="canteen-forgot-success-panel" class="password-success" style="display:none;">
+      <div class="lock-badge success-badge"><svg><use href="#icon-check-circle"></use></svg></div>
+      <h2>Password Changed!</h2>
+      <p class="subtitle">Your password has been successfully updated. You can now log in using your new password.</p>
+      <button class="btn btn-green btn-block" onclick="showAuthView('canteen-login')">Back to Login <svg><use href="#icon-arrow"></use></svg></button>
+    </div>
+  </div>
+
+</div>
+
+<!-- toast for feedback -->
+<div class="toast" id="toast"></div>
+
+<!-- Firebase SDK (accounts + login) -->
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+<!-- EmailJS SDK (sends the 6-digit code) -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>

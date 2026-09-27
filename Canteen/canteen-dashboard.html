@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canteen Dashboard — Campus Cart</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="dashboard.css">
+</head>
+<body class="dash-body">
+
+<!-- ============ ICON LIBRARY ============ -->
+<svg style="display:none;">
+  <symbol id="i-cart" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></symbol>
+  <symbol id="i-food" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v7a4 4 0 0 0 4 4h1v7"></path><path d="M8 3v7"></path><path d="M4 3v7"></path><path d="M17 3c-2 0-4 2-4 6s2 6 4 6v6"></path></symbol>
+  <symbol id="i-package" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8v8l9 5 9-5V8Z"></path><path d="M3 8l9 5 9-5"></path><path d="M12 13v8"></path></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V9"></path><path d="M11 19V4"></path><path d="M18 19v-7"></path><path d="M3 19h18"></path></symbol>
+  <symbol id="i-bulb" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M12 2a6 6 0 0 0-4 10.5c.6.6 1 1.4 1 2.5h6c0-1.1.4-1.9 1-2.5A6 6 0 0 0 12 2Z"></path></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 5-2 6-2 6h16s-2-1-2-6"></path><path d="M13.7 21a2 2 0 0 1-3.4 0"></path></symbol>
+  <symbol id="i-store" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9 4 4h16l1 5"></path><path d="M4 9h16v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9Z"></path><path d="M9 20v-6h6v6"></path></symbol>
+  <symbol id="i-logout" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-5-5L5 21"></path></symbol>
+  <symbol id="i-inbox" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z"></path></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></symbol>
+  <symbol id="i-warning" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></symbol>
+  <symbol id="i-peso" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 21V4h6a4 4 0 0 1 0 8H7"></path><path d="M4 10h13"></path><path d="M4 13h13"></path></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z"></path><circle cx="12" cy="13" r="3.5"></circle></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 6-10 7L2 6"></path></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92Z"></path></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21a8 8 0 0 0-16 0"></path><circle cx="12" cy="7" r="4"></circle></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.59 2.59 20 10a2 2 0 0 1 0 2.83l-6.17 6.17a2 2 0 0 1-2.83 0L3.59 11.59A2 2 0 0 1 3 10.17V4a2 2 0 0 1 2-2h6.17a2 2 0 0 1 1.42.59Z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4"></path><path d="M8 2v4"></path><path d="M3 10h18"></path></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M3 6h.01"></path><path d="M3 12h.01"></path><path d="M3 18h.01"></path></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"></path><circle cx="12" cy="12" r="3"></circle></symbol>
+</svg>
+
+<div class="dash-shell">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="dash-sidebar">
+    <div class="dash-logo"><span class="logo-icon"><svg><use href="#i-cart"></use></svg></span><span>Campus Cart</span></div>
+
+    <nav class="dash-nav">
+      <button class="dash-nav-item active" data-view="dashboard-view" onclick="showView('dashboard-view', this)">
+        <svg><use href="#i-grid"></use></svg><span>Dashboard</span>
+      </button>
+      <button class="dash-nav-item" data-view="menu-view" onclick="showView('menu-view', this)">
+        <svg><use href="#i-food"></use></svg><span>Menu Management</span>
+      </button>
+
+      <div class="dash-nav-divider"></div>
+
+      <div class="dash-nav-item is-soon"><svg><use href="#i-package"></use></svg><span>Order Management</span><span class="dash-nav-soon-tag">SOON</span></div>
+      <div class="dash-nav-item is-soon"><svg><use href="#i-clock"></use></svg><span>Order History</span><span class="dash-nav-soon-tag">SOON</span></div>
+      <div class="dash-nav-item is-soon"><svg><use href="#i-chart"></use></svg><span>Sales &amp; Reports</span><span class="dash-nav-soon-tag">SOON</span></div>
+      <div class="dash-nav-item is-soon"><svg><use href="#i-bulb"></use></svg><span>Student Suggestions</span><span class="dash-nav-soon-tag">SOON</span></div>
+      <div class="dash-nav-item is-soon"><svg><use href="#i-bell"></use></svg><span>Notifications</span><span class="dash-nav-soon-tag">SOON</span></div>
+
+      <div class="dash-nav-divider"></div>
+
+      <button class="dash-nav-item" data-view="profile-view" onclick="showView('profile-view', this)">
+        <svg><use href="#i-store"></use></svg><span>Canteen Profile</span>
+      </button>
+    </nav>
+
+    <button class="dash-logout" onclick="canteenLogout()"><svg><use href="#i-logout"></use></svg><span>Logout</span></button>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="dash-main">
+
+    <div class="dash-topbar">
+      <div>
+        <h1 id="topbar-title">Dashboard</h1>
+        <div class="dash-topbar-sub" id="topbar-sub">Loading canteen…</div>
+      </div>
+      <div class="dash-topbar-right">
+        <span class="status-pill neutral" id="status-pill-topbar">—</span>
+      </div>
+    </div>
+
+    <div class="dash-content">
+
+      <!-- ============ DASHBOARD VIEW ============ -->
+      <section class="dash-view active" id="dashboard-view">
+
+        <div class="stat-grid">
+          <div class="stat-card"><div class="stat-card-icon"><svg><use href="#i-chart"></use></svg></div><div class="stat-card-label">Today's Orders</div><div class="stat-card-value">0</div></div>
+          <div class="stat-card"><div class="stat-card-icon"><svg><use href="#i-clock"></use></svg></div><div class="stat-card-label">Pending</div><div class="stat-card-value">0</div></div>
+          <div class="stat-card"><div class="stat-card-icon"><svg><use href="#i-food"></use></svg></div><div class="stat-card-label">Preparing</div><div class="stat-card-value">0</div></div>
+          <div class="stat-card"><div class="stat-card-icon"><svg><use href="#i-check"></use></svg></div><div class="stat-card-label">Ready for Pickup</div><div class="stat-card-value">0</div></div>
+          <div class="stat-card accent"><div class="stat-card-icon"><svg><use href="#i-check"></use></svg></div><div class="stat-card-label">Completed Today</div><div class="stat-card-value">0</div></div>
+          <div class="stat-card accent"><div class="stat-card-icon"><svg><use href="#i-peso"></use></svg></div><div class="stat-card-label">Today's Sales</div><div class="stat-card-value">₱0</div></div>
+          <div class="stat-card" id="stat-active-items"><div class="stat-card-icon"><svg><use href="#i-grid"></use></svg></div><div class="stat-card-label">Active Menu Items</div><div class="stat-card-value">0</div></div>
+          <div class="stat-card warn" id="stat-low-stock"><div class="stat-card-icon"><svg><use href="#i-warning"></use></svg></div><div class="stat-card-label">Low Stock / Unavailable</div><div class="stat-card-value">0</div></div>
+        </div>
+
+        <div class="dash-panel">
+          <div class="dash-panel-head"><h2>Recent Orders</h2></div>
+          <div class="empty-state">
+            <svg><use href="#i-inbox"></use></svg>
+            Wala pang orders. Malalaman mo dito agad kapag may nag-order na student — kasama ng Order Management (susunod na phase).
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ============ MENU MANAGEMENT VIEW ============ -->
+      <section class="dash-view" id="menu-view">
+
+        <div class="menu-main">
+
+          <div class="menu-toolbar">
+            <div class="menu-search">
+              <span class="icon"><svg><use href="#i-search"></use></svg></span>
+              <input type="text" id="menu-search-input" placeholder="Search menu items…" oninput="setMenuSearch(this.value)">
+            </div>
+
+            <div class="menu-cat-select">
+              <select id="menu-cat-filter" onchange="setMenuFilter(this.value)">
+                <option value="all">All Categories</option>
+              </select>
+              <svg><use href="#i-chevron-down"></use></svg>
+            </div>
+
+            <button class="btn btn-green" onclick="openFoodModal(null, 'add')"><svg><use href="#i-plus"></use></svg> Add Food</button>
+          </div>
+
+          <div class="dash-panel menu-table-panel">
+            <div class="menu-table-wrap">
+              <table class="menu-table">
+                <thead>
+                  <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="menu-table-body"></tbody>
+              </table>
+            </div>
+
+            <div class="empty-state" id="menu-empty" style="display:none;">
+              <svg><use href="#i-food"></use></svg>
+              Wala ka pang naidadagdag na food item. I-click ang "Add Food" para magsimula.
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ============ ADD / EDIT / VIEW FOOD MODAL ============ -->
+        <div class="food-modal-overlay" id="food-modal-overlay" onclick="if (event.target === this) closeFoodModal();">
+          <aside class="dash-panel food-panel" id="food-panel">
+            <button class="close-btn food-panel-reset" title="Close" onclick="closeFoodModal()"><svg><use href="#i-x"></use></svg></button>
+            <h2 id="food-modal-title">Add Food Item</h2>
+            <p class="subtitle" id="food-modal-subtitle">Ilagay ang detalye ng food item na ilalagay sa iyong menu.</p>
+            <p class="form-error" id="food-error"></p>
+
+            <form id="food-form" onsubmit="return saveFood(event)" novalidate>
+              <input type="hidden" id="food-id">
+              <input type="hidden" id="food-image">
+
+              <div class="field">
+                <label>Food Image</label>
+                <input type="file" id="food-image-file" accept="image/png, image/jpeg" style="display:none" onchange="handleFoodImageUpload(event)">
+                <div class="food-img-preview" id="food-img-preview" onclick="document.getElementById('food-image-file').click()">
+                  <svg><use href="#i-camera"></use></svg>
+                  <span>Click to upload food image<br>(PNG, JPG, max 5MB)</span>
+                </div>
+              </div>
+
+              <div class="field">
+                <label>Food Name</label>
+                <div class="input-wrap"><span class="icon"><svg><use href="#i-food"></use></svg></span><input type="text" id="food-name" placeholder="e.g. Chicken Adobo" required></div>
+              </div>
+
+              <div class="field">
+                <label>Category</label>
+                <select class="dash-select" id="food-category">
+                  <option value="Rice Meals">Rice Meals</option>
+                  <option value="Snacks">Snacks</option>
+                  <option value="Drinks">Drinks</option>
+                  <option value="Desserts">Desserts</option>
+                  <option value="Others">Others</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label>Price (₱)</label>
+                <input type="number" class="dash-select" id="food-price" min="0" step="0.01" placeholder="e.g. 90.00" required>
+              </div>
+
+              <div class="field">
+                <label>Description</label>
+                <textarea class="dash-textarea" id="food-description" placeholder="Enter food description…"></textarea>
+              </div>
+
+              <div class="field">
+                <label>Stock</label>
+                <input type="number" class="dash-select" id="food-stock" min="0" step="1" placeholder="e.g. 25" required>
+              </div>
+
+              <div class="field switch-row food-availability-row">
+                <label class="switch">
+                  <input type="checkbox" id="food-available" checked>
+                  <span class="switch-track"></span>
+                </label>
+                <span>Availability</span>
+              </div>
+
+              <button type="submit" class="btn btn-green btn-block" id="food-submit-btn">Save Item</button>
+              <button type="button" class="btn-outline-sm btn-block" id="food-close-btn" onclick="closeFoodModal()" style="display:none;">Close</button>
+            </form>
+          </aside>
+        </div>
+
+      </section>
+
+      <!-- ============ CANTEEN PROFILE VIEW ============ -->
+      <section class="dash-view" id="profile-view">
+
+        <div class="profile-layout">
+
+          <!-- ===== LEFT COLUMN ===== -->
+          <div class="profile-col">
+
+            <form id="profile-form" onsubmit="return saveProfile(event)" novalidate>
+
+              <p class="form-error" id="profile-error"></p>
+
+              <div class="dash-panel">
+                <div class="dash-panel-head"><h2>Basic Information</h2></div>
+
+                <div class="profile-avatar-row">
+                  <div class="profile-avatar" id="profile-avatar">
+                    <svg><use href="#i-store"></use></svg>
+                  </div>
+                  <input type="file" id="profile-avatar-file" accept="image/png, image/jpeg" style="display:none" onchange="handleAvatarUpload(event)">
+                  <button type="button" class="btn-outline-sm" onclick="document.getElementById('profile-avatar-file').click()">
+                    <svg><use href="#i-camera"></use></svg> Change Profile Picture
+                  </button>
+                  <button type="button" class="btn-outline-sm btn-danger" id="avatar-remove-btn" onclick="removeAvatar()" style="display:none">
+                    <svg><use href="#i-trash"></use></svg> Remove
+                  </button>
+                </div>
+
+                <div class="field">
+                  <label>Canteen Name</label>
+                  <div class="input-wrap"><span class="icon"><svg><use href="#i-store"></use></svg></span><input type="text" id="profile-name" required></div>
+                </div>
+
+                <div class="field">
+                  <label>Owner / Contact Person</label>
+                  <div class="input-wrap"><span class="icon"><svg><use href="#i-user"></use></svg></span><input type="text" id="profile-owner" placeholder="e.g. Juan Dela Cruz"></div>
+                </div>
+
+                <div class="field">
+                  <label>Canteen Contact</label>
+                  <div class="input-wrap"><span class="icon"><svg><use href="#i-phone"></use></svg></span><input type="text" id="profile-contact" placeholder="e.g. 0917 123 4567"></div>
+                </div>
+
+                <div class="field">
+                  <label>Email Address</label>
+                  <div class="input-wrap"><span class="icon"><svg><use href="#i-mail"></use></svg></span><input type="text" id="profile-email" placeholder="canteen@email.com" readonly></div>
+                </div>
+              </div>
+
+              <div class="dash-panel">
+                <div class="dash-panel-head"><h2>Canteen Details</h2></div>
+
+                <div class="field">
+                  <label>Location / Area</label>
+                  <div class="input-wrap"><span class="icon"><svg><use href="#i-pin"></use></svg></span><input type="text" id="profile-location" placeholder="e.g. Main Building"></div>
+                </div>
+
+                <div class="field">
+                  <label>Description</label>
+                  <textarea class="dash-textarea" id="profile-description" placeholder="Serving affordable and delicious food for our beloved students. Fresh ingredients, quality food, always!"></textarea>
+                </div>
+
+                <div class="form-grid-2">
+                  <div class="field">
+                    <label>Canteen Type</label>
+                    <select class="dash-select" id="profile-type">
+                      <option value="Food & Beverages">Food &amp; Beverages</option>
+                      <option value="Rice Meals">Rice Meals</option>
+                      <option value="Snacks &amp; Drinks">Snacks &amp; Drinks</option>
+                      <option value="Desserts">Desserts</option>
+                      <option value="Others">Others</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Service Type</label>
+                    <select class="dash-select" id="profile-service">
+                      <option value="Dine-in + Take-out">Dine-in + Take-out</option>
+                      <option value="Dine-in only">Dine-in only</option>
+                      <option value="Take-out only">Take-out only</option>
+                      <option value="Pre-order only">Pre-order only</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="field">
+                  <label>Established Since</label>
+                  <div class="input-wrap"><span class="icon"><svg><use href="#i-calendar"></use></svg></span><input type="date" id="profile-established"></div>
+                </div>
+
+                <button type="submit" class="btn btn-green">Save Changes</button>
+              </div>
+
+            </form>
+
+          </div>
+
+          <!-- ===== RIGHT COLUMN ===== -->
+          <div class="profile-col">
+
+            <div class="dash-panel">
+              <div class="dash-panel-head"><h2>Canteen Banner</h2></div>
+
+              <div class="profile-banner" id="profile-banner">
+                <svg><use href="#i-image"></use></svg>
+              </div>
+
+              <input type="file" id="profile-banner-file" accept="image/png, image/jpeg" style="display:none" onchange="handleBannerUpload(event)">
+              <button type="button" class="btn-outline-sm btn-block" onclick="document.getElementById('profile-banner-file').click()">
+                <svg><use href="#i-camera"></use></svg> Change Banner
+              </button>
+              <button type="button" class="btn-outline-sm btn-block btn-danger" id="banner-remove-btn" onclick="removeBanner()" style="display:none">
+                <svg><use href="#i-trash"></use></svg> Remove Banner
+              </button>
+            </div>
+
+            <div class="dash-panel">
+              <div class="dash-panel-head"><h2>Operating Hours</h2></div>
+
+              <div class="hours-list" id="hours-list">
+                <!-- rows injected by JS: renderOperatingHours() -->
+              </div>
+            </div>
+
+            <div class="dash-panel">
+              <div class="dash-panel-head">
+                <h2>Canteen Status</h2>
+                <span class="status-pill neutral" id="profile-status-pill">—</span>
+              </div>
+
+              <div class="switch-row">
+                <label class="switch">
+                  <input type="checkbox" id="profile-status-toggle" onchange="onStatusToggle(this)">
+                  <span class="switch-track"></span>
+                </label>
+                <span id="profile-status-label">Closed</span>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- toast for feedback -->
+<div class="toast" id="toast"></div>
+
+<!-- Logout Confirmation Modal -->
+<div id="logoutModal" class="logout-modal-overlay">
+    <div class="logout-modal-card">
+
+        <div class="logout-modal-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <use href="#i-logout"></use>
+            </svg>
+        </div>
+
+        <h2>Confirm Logout</h2>
+
+        <p>
+            Are you sure you want to log out of your canteen account?
+        </p>
+
+        <div class="logout-modal-actions">
+            <button
+                type="button"
+                class="logout-cancel-btn"
+                onclick="closeLogoutModal()">
+                Cancel
+            </button>
+
+            <button
+                type="button"
+                class="logout-confirm-btn"
+                onclick="confirmCanteenLogout()">
+                Yes, Logout
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+<script src="canteen-dashboard.js"></script>
+</body>
+</html>

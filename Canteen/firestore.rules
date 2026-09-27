@@ -1,0 +1,32 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Canteen profiles — readable by anyone (students browse the
+    // dashboard list), writable only by the canteen that owns it.
+    match /canteens/{canteenId} {
+      allow read: if true;
+      allow create, update: if request.auth != null
+        && request.auth.uid == canteenId;
+      allow delete: if false;
+    }
+
+    // Menu items — readable by anyone (students browse menus),
+    // writable only by the canteen that owns the item.
+    match /menuItems/{itemId} {
+      allow read: if true;
+      allow create: if request.auth != null
+        && request.auth.uid == request.resource.data.canteenId;
+      allow update, delete: if request.auth != null
+        && request.auth.uid == resource.data.canteenId;
+    }
+
+    // Student profiles — private to each student.
+    match /students/{studentId} {
+      allow read, create, update: if request.auth != null
+        && request.auth.uid == studentId;
+      allow delete: if false;
+    }
+  }
+}
