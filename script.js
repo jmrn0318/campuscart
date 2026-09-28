@@ -936,7 +936,7 @@ async function studentLogin(event) {
 
     closeAllOverlays();
 
-    window.location.href = 'student-dashboard.html';
+    window.location.href = 'Student/student-dashboard.html';
 
   } catch (err) {
 
