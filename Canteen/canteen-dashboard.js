@@ -1408,17 +1408,32 @@ async function updateSuggestionStatus(id, status) {
 
 /* ============ NOTIFICATIONS (built from orders + suggestions) ============ */
 /* No extra Firestore rules needed: the feed is computed from data the canteen
-   can already read. "Read" state is remembered in this browser only. */
+   can already read. "Read" and "deleted" state are remembered in this browser
+   only (per canteen account), because orders/suggestions themselves can't be
+   deleted by the canteen. */
 
-function notifSeenKey() { return 'canteenNotifSeen:' + currentUid; }
+let notifSelected = new Set();
+
+function notifSeenKey()    { return 'canteenNotifSeen:' + currentUid; }      // legacy "read up to" timestamp
+function notifReadKey()    { return 'canteenNotifRead:' + currentUid; }
+function notifDeletedKey() { return 'canteenNotifDeleted:' + currentUid; }
 
 function getNotifSeen() {
   try { return Number(localStorage.getItem(notifSeenKey())) || 0; } catch (e) { return 0; }
 }
 
+function loadIdSet(key) {
+  try { return new Set(JSON.parse(localStorage.getItem(key) || '[]')); } catch (e) { return new Set(); }
+}
+
+function saveIdSet(key, set) {
+  try { localStorage.setItem(key, JSON.stringify(Array.from(set))); } catch (e) { /* private mode: ignore */ }
+}
+
 function buildNotifications() {
 
   const list = [];
+  const deleted = loadIdSet(notifDeletedKey());
 
   orders.forEach(o => {
     const code = '#' + o.id.slice(0, 6).toUpperCase();
@@ -1426,6 +1441,7 @@ function buildNotifications() {
     const qty = (o.items || []).reduce((sum, i) => sum + Number(i.qty || 0), 0);
 
     list.push({
+      id: 'order:' + o.id,
       ts: orderMillis(o.createdAt), kind: 'order', view: 'orders-view',
       title: `New order ${code}`,
       text: `${name} ordered ${qty} item${qty === 1 ? '' : 's'} (${pesos(o.total)}).`
@@ -1433,6 +1449,7 @@ function buildNotifications() {
 
     if (o.status === 'cancelled' && o.cancelledBy !== 'canteen') {
       list.push({
+        id: 'cancel:' + o.id,
         ts: orderMillis(o.updatedAt), kind: 'cancel', view: 'history-view',
         title: `Order ${code} cancelled`,
         text: `${name} cancelled this order.`
@@ -1442,13 +1459,21 @@ function buildNotifications() {
 
   suggestions.forEach(s => {
     list.push({
+      id: 'suggestion:' + s.id,
       ts: orderMillis(s.createdAt), kind: 'suggestion', view: 'suggestions-view',
       title: 'New student suggestion',
       text: `${s.studentName || 'A student'}: ${(s.message || '').slice(0, 90)}${(s.message || '').length > 90 ? '…' : ''}`
     });
   });
 
-  return list.sort((a, b) => b.ts - a.ts).slice(0, 50);
+  return list
+    .filter(n => !deleted.has(n.id))
+    .sort((a, b) => b.ts - a.ts)
+    .slice(0, 50);
+}
+
+function isNotifUnread(n, readSet, legacySeen) {
+  return n.ts > legacySeen && !readSet.has(n.id);
 }
 
 function renderNotifications() {
@@ -1457,14 +1482,24 @@ function renderNotifications() {
   if (!listEl) return;
 
   const feed = buildNotifications();
-  const seen = getNotifSeen();
-  const unread = feed.filter(n => n.ts > seen).length;
+  const readSet = loadIdSet(notifReadKey());
+  const legacySeen = getNotifSeen();
+  const unread = feed.filter(n => isNotifUnread(n, readSet, legacySeen)).length;
+
+  // Drop selections that no longer exist (deleted, or fell off the 50-item cap)
+  const visibleIds = new Set(feed.map(n => n.id));
+  notifSelected = new Set(Array.from(notifSelected).filter(id => visibleIds.has(id)));
 
   const icons = { order: 'i-package', cancel: 'i-x', suggestion: 'i-bulb' };
 
   listEl.innerHTML = feed.length
     ? `<ul class="notif-feed">${feed.map(n => `
-        <li class="notif-item ${n.ts > seen ? 'unread' : ''}" onclick="openNotification('${n.view}')">
+        <li class="notif-item ${isNotifUnread(n, readSet, legacySeen) ? 'unread' : ''} ${notifSelected.has(n.id) ? 'selected' : ''}"
+            onclick="openNotification('${n.id}', '${n.view}')">
+          <input type="checkbox" class="notif-check" ${notifSelected.has(n.id) ? 'checked' : ''}
+                 aria-label="Select notification"
+                 onclick="event.stopPropagation()"
+                 onchange="toggleNotificationSelect('${n.id}', this.checked)">
           <span class="notif-icon ${n.kind}"><svg><use href="#${icons[n.kind]}"></use></svg></span>
           <span class="notif-body">
             <strong>${escapeHtml(n.title)}</strong>
@@ -1479,14 +1514,82 @@ function renderNotifications() {
     badge.textContent = unread;
     badge.style.display = unread ? 'inline-flex' : 'none';
   }
+
+  updateNotifToolbar(feed.length);
 }
 
-function markNotificationsRead() {
-  try { localStorage.setItem(notifSeenKey(), String(Date.now())); } catch (e) { /* private mode: ignore */ }
+function updateNotifToolbar(total) {
+
+  const count = notifSelected.size;
+
+  const countEl = document.getElementById('notif-selection-count');
+  if (countEl) countEl.textContent = `${count} selected`;
+
+  const selectAllBtn = document.getElementById('notif-select-all-btn');
+  if (selectAllBtn) {
+    selectAllBtn.textContent = (total > 0 && count === total) ? 'Deselect all' : 'Select all';
+    selectAllBtn.disabled = total === 0;
+  }
+
+  const markBtn = document.getElementById('notif-mark-read-btn');
+  if (markBtn) markBtn.disabled = count === 0;
+
+  const delBtn = document.getElementById('notif-delete-btn');
+  if (delBtn) delBtn.disabled = count === 0;
+}
+
+function toggleNotificationSelect(id, checked) {
+  if (checked) notifSelected.add(id); else notifSelected.delete(id);
   renderNotifications();
 }
 
-function openNotification(viewId) {
+function toggleSelectAllNotifications() {
+  const feed = buildNotifications();
+  if (notifSelected.size === feed.length) {
+    notifSelected.clear();
+  } else {
+    notifSelected = new Set(feed.map(n => n.id));
+  }
+  renderNotifications();
+}
+
+function markSelectedNotificationsRead() {
+  if (!notifSelected.size) return;
+  const readSet = loadIdSet(notifReadKey());
+  notifSelected.forEach(id => readSet.add(id));
+  saveIdSet(notifReadKey(), readSet);
+  const n = notifSelected.size;
+  notifSelected.clear();
+  renderNotifications();
+  showToast(`${n} notification${n === 1 ? '' : 's'} marked as read.`);
+}
+
+function deleteSelectedNotifications() {
+  if (!notifSelected.size) return;
+  const n = notifSelected.size;
+  if (!confirm(`Delete ${n} notification${n === 1 ? '' : 's'}? This can't be undone.`)) return;
+
+  const deleted = loadIdSet(notifDeletedKey());
+  notifSelected.forEach(id => deleted.add(id));
+  saveIdSet(notifDeletedKey(), deleted);
+  notifSelected.clear();
+  renderNotifications();
+  showToast(`${n} notification${n === 1 ? '' : 's'} deleted.`);
+}
+
+// Mark every notification as read (kept for any other callers)
+function markNotificationsRead() {
+  const readSet = loadIdSet(notifReadKey());
+  buildNotifications().forEach(n => readSet.add(n.id));
+  saveIdSet(notifReadKey(), readSet);
+  renderNotifications();
+}
+
+function openNotification(id, viewId) {
+  const readSet = loadIdSet(notifReadKey());
+  readSet.add(id);
+  saveIdSet(notifReadKey(), readSet);
+  renderNotifications();
   showView(viewId, document.querySelector(`[data-view="${viewId}"]`));
 }
 
@@ -2514,3 +2617,20 @@ function showToast(message) {
       2400
     );
 }
+
+
+/* ============ THEME (light / dark) ============ */
+
+function applyTheme(theme) {
+  document.body.dataset.theme = theme;
+  const btn = document.getElementById('theme-toggle');
+  if (btn) btn.setAttribute('aria-label', theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode');
+}
+
+function toggleTheme() {
+  const next = document.body.dataset.theme === 'light' ? 'dark' : 'light';
+  applyTheme(next);
+  try { localStorage.setItem('canteenTheme', next); } catch (e) { /* private mode: ignore */ }
+}
+
+applyTheme(document.body.dataset.theme || 'dark');

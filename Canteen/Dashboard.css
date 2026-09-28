@@ -19,16 +19,53 @@ body.dash-body {
   --green-dark: #4ade80;
   --ink: #f3f7f4;
   --gray: rgba(243, 247, 244, 0.62);
-  --border: rgba(255, 255, 255, 0.09);
+  --border: rgba(var(--ov), 0.09);
   --radius: 16px;
   --red: #f87171;
 
   --dash-bg: #0a130e;
-  --dash-card: rgba(255, 255, 255, 0.035);
-  --dash-card-hover: rgba(255, 255, 255, 0.055);
-  --dash-input-bg: rgba(255, 255, 255, 0.04);
+  --dash-card: rgba(var(--ov), 0.035);
+  --dash-card-hover: rgba(var(--ov), 0.055);
+  --dash-input-bg: rgba(var(--ov), 0.04);
   --dash-amber: #fbbf24;
+
+  --ov: 255, 255, 255;              /* overlay colour (white on dark) */
+  --dash-pop: #0e1c14;              /* modals, toasts */
+  --dash-pop2: #142a1e;             /* select dropdown options */
+  --dash-side-1: #0b160f;
+  --dash-side-2: #0a130e;
+  --dash-glow-a: rgba(34, 197, 94, 0.10);
+  --dash-glow-b: rgba(34, 197, 94, 0.06);
+  color-scheme: dark;
 }
+
+/* ---------- LIGHT THEME ---------- */
+body.dash-body[data-theme="light"] {
+  --green: #16a34a;
+  --green-dark: #15803d;
+  --ink: #10261a;
+  --gray: rgba(16, 38, 26, 0.62);
+  --border: rgba(16, 38, 26, 0.12);
+  --red: #dc2626;
+
+  --dash-bg: #f2f7f3;
+  --dash-card: #ffffff;
+  --dash-card-hover: #f3f8f4;
+  --dash-input-bg: rgba(16, 38, 26, 0.04);
+  --dash-amber: #d97706;
+
+  --ov: 16, 38, 26;
+  --dash-pop: #ffffff;
+  --dash-pop2: #ffffff;
+  --dash-side-1: #ffffff;
+  --dash-side-2: #f6faf7;
+  --dash-glow-a: rgba(34, 197, 94, 0.12);
+  --dash-glow-b: rgba(34, 197, 94, 0.07);
+  color-scheme: light;
+}
+body.dash-body[data-theme="light"] .modal-wrap,
+body.dash-body[data-theme="light"] .logout-modal-card,
+body.dash-body[data-theme="light"] .toast { box-shadow: 0 20px 50px rgba(16, 38, 26, 0.18); }
 
 /* Force a consistent box model inside the dashboard regardless of
    whatever style.css defines globally — this is what was letting
@@ -56,9 +93,9 @@ body.dash-body {
 
   background-color: var(--dash-bg);
   background-image:
-    radial-gradient(1100px 700px at 12% -10%, rgba(34, 197, 94, 0.10), transparent 60%),
-    radial-gradient(900px 600px at 100% 10%, rgba(34, 197, 94, 0.06), transparent 55%),
-    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.015) 0px, rgba(255, 255, 255, 0.015) 2px, transparent 2px, transparent 26px);
+    radial-gradient(1100px 700px at 12% -10%, var(--dash-glow-a), transparent 60%),
+    radial-gradient(900px 600px at 100% 10%, var(--dash-glow-b), transparent 55%),
+    repeating-linear-gradient(135deg, rgba(var(--ov), 0.015) 0px, rgba(var(--ov), 0.015) 2px, transparent 2px, transparent 26px);
   background-attachment: fixed;
 }
 
@@ -94,10 +131,10 @@ html {
 
   padding: 22px 16px;
 
-  background: linear-gradient(180deg, #0b160f 0%, #0a130e 100%);
-  color: #fff;
+  background: linear-gradient(180deg, var(--dash-side-1) 0%, var(--dash-side-2) 100%);
+  color: var(--ink);
 
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  border-right: 1px solid rgba(var(--ov), 0.06);
 
   overflow-y: auto;
 
@@ -115,7 +152,7 @@ html {
 
   padding: 0 10px 24px;
 
-  color: #fff;
+  color: var(--ink);
 
   font-size: 17px;
   font-weight: 700;
@@ -170,7 +207,7 @@ html {
 
   background: transparent;
 
-  color: rgba(255, 255, 255, 0.68);
+  color: rgba(var(--ov), 0.68);
 
   font-family: inherit;
   font-size: 14px;
@@ -197,9 +234,9 @@ html {
 }
 
 .dash-nav-item:hover {
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(var(--ov), 0.07);
 
-  color: #fff;
+  color: var(--ink);
 
   transform: translateX(2px);
 }
@@ -229,7 +266,7 @@ html {
 .dash-nav-item.is-soon:hover {
   background: transparent;
 
-  color: rgba(255, 255, 255, 0.68);
+  color: rgba(var(--ov), 0.68);
 
   transform: none;
 }
@@ -241,9 +278,9 @@ html {
 
   border-radius: 999px;
 
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(var(--ov), 0.10);
 
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(var(--ov), 0.65);
 
   font-size: 10px;
   font-weight: 700;
@@ -257,7 +294,7 @@ html {
 
   margin: 12px 4px;
 
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(var(--ov), 0.08);
 }
 
 
@@ -278,7 +315,7 @@ html {
 
   background: transparent;
 
-  color: rgba(255, 255, 255, 0.68);
+  color: rgba(var(--ov), 0.68);
 
   font-family: inherit;
   font-size: 14px;
@@ -444,7 +481,7 @@ html {
 }
 
 .status-pill.neutral {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(var(--ov), 0.08);
 
   color: var(--gray);
 }
@@ -638,7 +675,7 @@ html {
 
   margin-bottom: 12px;
 
-  stroke: rgba(255, 255, 255, 0.28);
+  stroke: rgba(var(--ov), 0.28);
 }
 
 
@@ -764,9 +801,9 @@ html {
   align-items: center;
   justify-content: center;
 
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(var(--ov), 0.03);
 
-  color: rgba(255, 255, 255, 0.28);
+  color: rgba(var(--ov), 0.28);
 
   background-position: center;
   background-size: cover;
@@ -777,7 +814,7 @@ html {
   width: 30px;
   height: 30px;
 
-  stroke: rgba(255, 255, 255, 0.28);
+  stroke: rgba(var(--ov), 0.28);
 }
 
 
@@ -966,7 +1003,7 @@ html {
 
   border-radius: 999px;
 
-  background: rgba(255, 255, 255, 0.16);
+  background: rgba(var(--ov), 0.16);
 
   cursor: pointer;
 
@@ -1052,7 +1089,7 @@ html {
 
   display: flex;
 
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(var(--ov), 0.4);
 
   pointer-events: none;
 }
@@ -1124,11 +1161,11 @@ textarea.dash-textarea {
 }
 
 textarea.dash-textarea::placeholder {
-  color: rgba(255, 255, 255, 0.32);
+  color: rgba(var(--ov), 0.32);
 }
 
 textarea.dash-textarea:hover {
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(var(--ov), 0.2);
 }
 
 textarea.dash-textarea:focus {
@@ -1168,13 +1205,13 @@ select.dash-select {
 }
 
 select.dash-select option {
-  background-color: #142a1e;
+  background-color: var(--dash-pop2);
 
   color: var(--ink);
 }
 
 select.dash-select:hover {
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(var(--ov), 0.2);
 }
 
 select.dash-select:focus {
@@ -1220,7 +1257,7 @@ select.dash-select:focus {
 
 .dash-panel input::placeholder,
 .dash-modal input::placeholder {
-  color: rgba(255, 255, 255, 0.32);
+  color: rgba(var(--ov), 0.32);
 }
 
 .dash-panel input[type="text"]:focus,
@@ -1357,7 +1394,7 @@ select.dash-select:focus {
 
   padding: 32px;
 
-  background: #0e1c14;
+  background: var(--dash-pop);
 
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -1491,7 +1528,7 @@ select.dash-select:focus {
 
   padding: 32px;
 
-  background: #0e1c14;
+  background: var(--dash-pop);
 
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -1603,9 +1640,9 @@ select.dash-select:focus {
 }
 
 .logout-cancel-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(var(--ov), 0.08);
 
-  border-color: rgba(255, 255, 255, 0.24);
+  border-color: rgba(var(--ov), 0.24);
 }
 
 .logout-confirm-btn {
@@ -1649,7 +1686,7 @@ select.dash-select:focus {
 
   border-radius: 12px;
 
-  background: #0e1c14;
+  background: var(--dash-pop);
   border: 1px solid var(--border);
 
   color: var(--ink);
@@ -1731,7 +1768,7 @@ select.dash-select:focus {
 
   display: flex;
 
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(var(--ov), 0.4);
 
   pointer-events: none;
 }
@@ -1768,7 +1805,7 @@ select.dash-select:focus {
 }
 
 .menu-search input::placeholder {
-  color: rgba(255, 255, 255, 0.32);
+  color: rgba(var(--ov), 0.32);
 }
 
 .menu-search input:focus {
@@ -1824,7 +1861,7 @@ select.dash-select:focus {
 }
 
 .menu-cat-select select option {
-  background-color: #142a1e;
+  background-color: var(--dash-pop2);
 
   color: var(--ink);
 }
@@ -1837,7 +1874,7 @@ select.dash-select:focus {
   width: 15px;
   height: 15px;
 
-  stroke: rgba(255, 255, 255, 0.5);
+  stroke: rgba(var(--ov), 0.5);
 
   pointer-events: none;
 }
@@ -1870,7 +1907,7 @@ table.menu-table thead th {
 
   border-bottom: 1px solid var(--border);
 
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(var(--ov), 0.02);
 
   color: var(--gray);
 
@@ -1901,7 +1938,7 @@ table.menu-table tbody tr {
 }
 
 table.menu-table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.025);
+  background: rgba(var(--ov), 0.025);
 }
 
 .menu-thumb {
@@ -1914,13 +1951,13 @@ table.menu-table tbody tr:hover {
 
   border-radius: 10px;
 
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(var(--ov), 0.04);
 
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
 
-  color: rgba(255, 255, 255, 0.28);
+  color: rgba(var(--ov), 0.28);
 
   flex-shrink: 0;
 }
@@ -2029,7 +2066,7 @@ table.menu-table tbody tr:hover {
   background-size: cover;
   background-repeat: no-repeat;
 
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(var(--ov), 0.4);
 
   font-size: 12px;
   line-height: 1.5;
@@ -2223,12 +2260,12 @@ table.menu-table tbody tr:hover {
 
   border-radius: 12px;
 
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(var(--ov), 0.03);
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
 
-  color: rgba(255, 255, 255, 0.28);
+  color: rgba(var(--ov), 0.28);
 
   border: 1px solid var(--border);
 }
@@ -2293,7 +2330,7 @@ table.menu-table tbody tr:hover {
 }
 
 .hours-time-input::placeholder {
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(var(--ov), 0.3);
 }
 
 .hours-time-input:focus {
@@ -2348,13 +2385,13 @@ table.menu-table tbody tr:hover {
 }
 
 .dash-sidebar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(var(--ov), 0.12);
 
   border-radius: 999px;
 }
 
 .dash-sidebar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.20);
+  background: rgba(var(--ov), 0.20);
 }
 
 
@@ -2611,7 +2648,7 @@ table.menu-table tbody tr:hover {
 .ord-badge {
   padding: 4px 10px; border-radius: 999px; white-space: nowrap;
   font-size: 11.5px; font-weight: 700;
-  background: rgba(255, 255, 255, 0.08); color: var(--gray);
+  background: rgba(var(--ov), 0.08); color: var(--gray);
 }
 .ord-badge.pending   { background: rgba(251, 191, 36, 0.16); color: var(--dash-amber); }
 .ord-badge.confirmed,
@@ -2665,7 +2702,7 @@ table.menu-table tbody tr:hover {
 .rep-row-head { display: flex; justify-content: space-between; gap: 10px; color: var(--ink); font-size: 13.5px; }
 .rep-row-head b { color: var(--green-dark); }
 .rep-row small { color: var(--gray); font-size: 12px; }
-.rep-meter { height: 8px; margin: 6px 0 4px; border-radius: 999px; background: rgba(255, 255, 255, 0.07); overflow: hidden; }
+.rep-meter { height: 8px; margin: 6px 0 4px; border-radius: 999px; background: rgba(var(--ov), 0.07); overflow: hidden; }
 .rep-meter span { display: block; height: 100%; border-radius: 999px; background: var(--green); }
 .rep-meter.pending span, .rep-meter.confirmed span { background: var(--dash-amber); }
 .rep-meter.preparing span, .rep-meter.ready span { background: #60a5fa; }
@@ -2707,3 +2744,24 @@ table.menu-table tbody tr:hover {
 .notif-body strong { color: var(--ink); font-size: 14px; }
 .notif-body span { color: var(--gray); font-size: 13px; overflow-wrap: anywhere; }
 .notif-time { flex: 0 0 auto; color: var(--gray); font-size: 12px; white-space: nowrap; }
+
+/* Notification selection */
+.notif-check { flex: 0 0 auto; width: 18px; height: 18px; cursor: pointer; accent-color: var(--green-dark, #16a34a); }
+.notif-item.selected { border-color: rgba(34, 197, 94, 0.7); background: rgba(34, 197, 94, 0.12); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* Theme toggle (sun / moon) */
+.theme-toggle {
+  position: relative; width: 40px; height: 40px; flex: 0 0 auto; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 12px; border: 1px solid var(--border);
+  background: var(--dash-input-bg); color: var(--ink);
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+.theme-toggle:hover { background: var(--dash-card-hover); }
+.theme-toggle:active { transform: scale(0.94); }
+.theme-toggle svg { width: 20px; height: 20px; stroke: currentColor; fill: none; }
+.theme-toggle .icon-sun { display: none; }
+body.dash-body[data-theme="light"] .theme-toggle .icon-sun { display: block; color: var(--dash-amber); }
+body.dash-body[data-theme="light"] .theme-toggle .icon-moon { display: none; }
+.dash-topbar-right { display: flex; align-items: center; gap: 12px; }

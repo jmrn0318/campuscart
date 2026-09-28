@@ -1963,3 +1963,20 @@ document.getElementById('logout-link').addEventListener('click', (e) => {
     .then(() => window.location.href = HOME_PATH)
     .catch(() => window.location.href = HOME_PATH);
 });
+
+
+/* ============ THEME (light / dark) ============ */
+
+function applyTheme(theme) {
+  document.body.dataset.theme = theme;
+  const btn = document.getElementById('theme-toggle');
+  if (btn) btn.setAttribute('aria-label', theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode');
+}
+
+function toggleTheme() {
+  const next = document.body.dataset.theme === 'light' ? 'dark' : 'light';
+  applyTheme(next);
+  try { localStorage.setItem('campusTheme', next); } catch (e) { /* private mode: ignore */ }
+}
+
+applyTheme(document.body.dataset.theme || 'dark');

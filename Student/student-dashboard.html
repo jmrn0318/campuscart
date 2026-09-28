@@ -7,10 +7,13 @@
 <link rel="stylesheet" href="student-dashboard.css">
 </head>
 <body class="dash-body">
+<script>try{document.body.dataset.theme=localStorage.getItem("campusTheme")||"dark";}catch(e){document.body.dataset.theme="dark";}</script>
 
 <!-- ============ ICON SPRITE (line icons used everywhere) ============ -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
     <symbol id="i-cart" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></symbol>
     <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
     <symbol id="i-utensils" viewBox="0 0 24 24"><path d="M3 3v7a4 4 0 0 0 4 4h1v7"/><path d="M8 3v7"/><path d="M4 3v7"/><path d="M17 3c-2 0-4 2-4 6s2 6 4 6v6"/></symbol>
@@ -100,6 +103,7 @@
       </div>
 
       <div class="dash-topbar-right">
+        <button type="button" class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle light/dark mode" title="Toggle light/dark mode"><svg class="ic icon-moon"><use href="#i-moon"/></svg><svg class="ic icon-sun"><use href="#i-sun"/></svg></button>
         <span class="status-pill neutral clock-pill">
           <svg class="ic"><use href="#i-calendar"/></svg>
           <span id="dash-date">—</span><span class="clock-sep">·</span><span id="dash-time">—</span>

@@ -8,7 +8,7 @@
   --radius: 18px;
   --red: #ef4444;
 
-  /* ---------- THEME VARIABLES (light default) ---------- */
+  /* ---------- COLOR VARIABLES ---------- */
   --bg: #ffffff;
   --bg-alt: #f6f8f6;
   --text: var(--ink);
@@ -21,21 +21,6 @@
   --icon-badge-bg: #eafaf0;
   --close-btn-bg: #f3f4f6;
   --close-btn-bg-hover: #e5e7eb;
-}
-
-[data-theme="dark"] {
-  --bg: #121212;
-  --bg-alt: #1a1f1c;
-  --text: #f0f2f0;
-  --text-muted: #a0a8a3;
-  --card-bg: #1e1e1e;
-  --card-border: #333d37;
-  --input-bg: #262626;
-  --input-border: #3a443e;
-  --modal-bg: #1e1e1e;
-  --icon-badge-bg: #1f3327;
-  --close-btn-bg: #2a2a2a;
-  --close-btn-bg-hover: #3a3a3a;
 }
 
 * {
@@ -61,35 +46,6 @@ svg {
 
 section {
   scroll-margin-top: 76px;
-}
-
-/* ---------- THEME TOGGLE BUTTON ---------- */
-
-.theme-toggle {
-  background: transparent;
-  border: 1.5px solid rgba(255, 255, 255, 0.8);
-  border-radius: 50%;
-  width: 38px;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background 0.2s ease, transform 0.15s ease, border-color 0.2s ease;
-}
-
-.theme-toggle:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
-}
-
-header.light-header .theme-toggle {
-  border-color: rgba(28, 43, 34, 0.45);
-}
-
-header.light-header .theme-toggle:hover {
-  background: rgba(28, 43, 34, 0.06);
 }
 
 /* ---------- HEADER ---------- */
@@ -1047,10 +1003,4 @@ footer {
   .role-cards {
     grid-template-columns: 1fr;
   }
-}
-
-.theme-toggle svg {
-  width: 18px;
-  height: 18px;
-  stroke: currentColor;
 }

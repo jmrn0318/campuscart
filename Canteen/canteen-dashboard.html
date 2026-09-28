@@ -7,9 +7,12 @@
 <link rel="stylesheet" href="Dashboard.css">
 </head>
 <body class="dash-body">
+<script>try{document.body.dataset.theme=localStorage.getItem("canteenTheme")||"dark";}catch(e){document.body.dataset.theme="dark";}</script>
 
 <!-- ============ ICON LIBRARY ============ -->
 <svg style="display:none;">
+  <symbol id="i-sun" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></symbol>
   <symbol id="i-cart" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></symbol>
   <symbol id="i-grid" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"></rect><rect x="14" y="3" width="7" height="7" rx="1.5"></rect><rect x="3" y="14" width="7" height="7" rx="1.5"></rect><rect x="14" y="14" width="7" height="7" rx="1.5"></rect></symbol>
   <symbol id="i-food" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v7a4 4 0 0 0 4 4h1v7"></path><path d="M8 3v7"></path><path d="M4 3v7"></path><path d="M17 3c-2 0-4 2-4 6s2 6 4 6v6"></path></symbol>
@@ -83,6 +86,7 @@
         <div class="dash-topbar-sub" id="topbar-sub">Loading canteen…</div>
       </div>
       <div class="dash-topbar-right">
+        <button type="button" class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle light/dark mode" title="Toggle light/dark mode"><svg class="icon-moon"><use href="#i-moon"></use></svg><svg class="icon-sun"><use href="#i-sun"></use></svg></button>
         <span class="status-pill neutral" id="status-pill-topbar">—</span>
       </div>
     </div>
@@ -310,9 +314,24 @@
       <section class="dash-view" id="notifications-view">
         <div class="dash-panel">
           <div class="dash-panel-head">
-            <h2>Notifications</h2>
-            <button type="button" class="btn btn-green btn-sm" onclick="markNotificationsRead()">Mark all as read</button>
+            <div>
+              <h2>Notifications</h2>
+              <div id="notif-selection-count" style="font-size:12px;color:#6b7280;margin-top:4px;">0 selected</div>
+            </div>
+
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+              <button type="button" class="btn btn-ghost btn-sm" onclick="toggleSelectAllNotifications()" id="notif-select-all-btn">
+                Select all
+              </button>
+              <button type="button" class="btn btn-green btn-sm" onclick="markSelectedNotificationsRead()" id="notif-mark-read-btn" disabled>
+                Mark selected as read
+              </button>
+              <button type="button" class="btn btn-danger btn-sm" onclick="deleteSelectedNotifications()" id="notif-delete-btn" disabled>
+                Delete selected
+              </button>
+            </div>
           </div>
+
           <div id="notif-list">
             <div class="empty-state"><svg><use href="#i-bell"></use></svg>No notifications yet.</div>
           </div>
