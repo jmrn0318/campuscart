@@ -2722,3 +2722,19 @@ if ('serviceWorker' in navigator) {
       .catch((err) => console.log('SW registration failed:', err));
   });
 }
+
+const themeToggle = document.getElementById('theme-toggle');
+const themeToggleIcon = themeToggle ? themeToggle.querySelector('use') : null;
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.documentElement.setAttribute('data-theme', savedTheme);
+if (themeToggleIcon) themeToggleIcon.setAttribute('href', savedTheme === 'dark' ? '#icon-sun' : '#icon-moon');
+
+if (themeToggle) {
+  themeToggle.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    const next = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    if (themeToggleIcon) themeToggleIcon.setAttribute('href', next === 'dark' ? '#icon-sun' : '#icon-moon');
+  });
+}
