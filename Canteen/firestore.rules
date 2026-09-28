@@ -3,29 +3,142 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Canteen profiles — readable by anyone (students browse the
-    // dashboard list), writable only by the canteen that owns it.
+    // =========================================================
+    // CANTEENS
+    // =========================================================
+    // Publicly readable so students can browse canteen profiles.
+    // Only the canteen owner can create/update its own profile.
     match /canteens/{canteenId} {
       allow read: if true;
+
       allow create, update: if request.auth != null
         && request.auth.uid == canteenId;
+
       allow delete: if false;
     }
 
-    // Menu items — readable by anyone (students browse menus),
-    // writable only by the canteen that owns the item.
+
+    // =========================================================
+    // MENU ITEMS
+    // =========================================================
+    // Publicly readable so students can browse menus.
+    // Only the canteen that owns the item can create/update/delete it.
     match /menuItems/{itemId} {
+
       allow read: if true;
+
       allow create: if request.auth != null
-        && request.auth.uid == request.resource.data.canteenId;
+        && request.resource.data.canteenId == request.auth.uid;
+
       allow update, delete: if request.auth != null
-        && request.auth.uid == resource.data.canteenId;
+        && resource.data.canteenId == request.auth.uid;
     }
 
-    // Student profiles — private to each student.
+
+    // =========================================================
+    // ORDERS
+    // =========================================================
+    // Students can create their own orders.
+    // Students can read their own orders.
+    // Canteens can read orders placed with them.
+    match /orders/{orderId} {
+
+      allow read: if request.auth != null
+        && (
+          request.auth.uid == resource.data.studentId
+          || request.auth.uid == resource.data.canteenId
+        );
+
+      allow create: if request.auth != null
+        && request.auth.uid == request.resource.data.studentId;
+
+      // Canteen can update its orders.
+      // Student can only cancel their own order while
+      // the order is still pending or preparing.
+      allow update: if request.auth != null
+        && (
+          request.auth.uid == resource.data.canteenId
+
+          || (
+            request.auth.uid == resource.data.studentId
+            && resource.data.status in ['pending', 'preparing']
+            && request.resource.data.status == 'cancelled'
+          )
+        );
+
+      allow delete: if false;
+    }
+
+
+    // =========================================================
+    // STUDENT PROFILES
+    // =========================================================
+    // Each student can only access their own profile.
     match /students/{studentId} {
+
       allow read, create, update: if request.auth != null
         && request.auth.uid == studentId;
+
+      allow delete: if false;
+
+
+      // =======================================================
+      // CART
+      // =======================================================
+      match /cart/{itemId} {
+        allow read, create, update, delete: if request.auth != null
+          && request.auth.uid == studentId;
+      }
+
+
+      // =======================================================
+      // FAVORITES
+      // =======================================================
+      match /favorites/{itemId} {
+        allow read, create, update, delete: if request.auth != null
+          && request.auth.uid == studentId;
+      }
+
+
+      // =======================================================
+      // NOTIFICATIONS
+      // =======================================================
+      match /notifications/{notifId} {
+        allow read, create, update, delete: if request.auth != null
+          && request.auth.uid == studentId;
+      }
+    }
+
+
+    // =========================================================
+    // SUGGESTIONS
+    // =========================================================
+    // Students can submit suggestions.
+    // Students can read their own suggestions.
+    // Canteens can read suggestions addressed to them.
+    // Only the canteen receiving the suggestion can update it.
+    match /suggestions/{suggestionId} {
+
+      // Student creates a suggestion for themselves.
+      allow create: if request.auth != null
+        && request.resource.data.studentId == request.auth.uid;
+
+
+      // Student can read their own suggestions.
+      // Canteen can read suggestions addressed to it.
+      allow read: if request.auth != null
+        && (
+          resource.data.studentId == request.auth.uid
+          || resource.data.canteenId == request.auth.uid
+        );
+
+
+      // Only the target canteen can update the suggestion.
+      allow update: if request.auth != null
+        && resource.data.canteenId == request.auth.uid;
+
+
+      // Suggestions cannot be deleted.
       allow delete: if false;
     }
   }

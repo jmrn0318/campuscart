@@ -354,32 +354,32 @@ function mapAuthError(err) {
   switch (err.code) {
 
     case 'auth/user-not-found':
-      return 'Wala pang account na naka-rehistro sa email na ito. Mag-sign up muna.';
+      return 'No account is registered with this email yet. Please sign up first.';
 
     case 'auth/wrong-password':
-      return 'Mali ang password. Subukan ulit o gamitin ang Forgot Password.';
+      return 'Incorrect password. Try again or use Forgot Password.';
 
     case 'auth/invalid-credential':
     case 'auth/invalid-login-credentials':
-      return 'Walang account na naka-rehistro sa email na ito, o mali ang password.';
+      return 'No account is registered with this email, or the password is incorrect.';
 
     case 'auth/invalid-email':
-      return 'Hindi wastong email address.';
+      return 'Invalid email address.';
 
     case 'auth/email-already-in-use':
-      return 'May existing na account na gumagamit ng email na ito. Mag-login na lang.';
+      return 'An account already exists using this email. Please log in instead.';
 
     case 'auth/weak-password':
-      return 'Kailangan ng password na hindi bababa sa 6 characters.';
+      return 'Password must be at least 6 characters.';
 
     case 'auth/too-many-requests':
-      return 'Sobrang dami ng pagtry, sandali muna bago ulitin.';
+      return 'Too many attempts. Please wait a moment before trying again.';
 
     case 'auth/network-request-failed':
-      return 'Walang internet connection. Subukan ulit.';
+      return 'No internet connection. Please try again.';
 
     default:
-      return 'May problemang nangyari. Subukan ulit.';
+      return 'Something went wrong. Please try again.';
   }
 }
 
@@ -406,13 +406,13 @@ function startResendCooldown(linkEl, onDone) {
 
   let seconds = RESEND_COOLDOWN_SEC;
 
-  const originalText = 'I-resend ang code';
+  const originalText = 'Resend code';
 
   linkEl.style.pointerEvents = 'none';
   linkEl.style.opacity = '0.5';
 
   linkEl.textContent =
-    `I-resend ang code (${seconds}s)`;
+    `Resend code (${seconds}s)`;
 
   const interval = setInterval(() => {
 
@@ -431,7 +431,7 @@ function startResendCooldown(linkEl, onDone) {
 
     } else {
       linkEl.textContent =
-        `I-resend ang code (${seconds}s)`;
+        `Resend code (${seconds}s)`;
     }
 
   }, 1000);
@@ -568,7 +568,7 @@ async function studentSignupStart(event) {
 
     showFormError(
       errorEl,
-      'Kailangang punan lahat ng fields bago makapag-sign up.'
+      'Please fill in all fields before signing up.'
     );
 
     return false;
@@ -579,7 +579,7 @@ async function studentSignupStart(event) {
 
     showFormError(
       errorEl,
-      'Hindi magkatugma ang password at confirm password.'
+      'Password and confirm password do not match.'
     );
 
     return false;
@@ -590,7 +590,7 @@ async function studentSignupStart(event) {
 
     showFormError(
       errorEl,
-      'Kailangan ng password na hindi bababa sa 6 characters.'
+      'Password must be at least 6 characters.'
     );
 
     return false;
@@ -604,7 +604,7 @@ async function studentSignupStart(event) {
 
   setButtonLoading(
     btn,
-    'Nagpapadala ng code...'
+    'Sending code...'
   );
 
 
@@ -658,7 +658,7 @@ async function studentSignupStart(event) {
 
     showFormError(
       errorEl,
-      'Hindi na-send ang code. Tingnan ang EmailJS setup mo, o subukan ulit.'
+      'The code could not be sent. Check your EmailJS setup, or try again.'
     );
 
   } finally {
@@ -703,7 +703,7 @@ async function studentVerifyCode(event) {
 
     showFormError(
       errorEl,
-      'May problema, subukan ulit mag-sign up.'
+      'Something went wrong, please try signing up again.'
     );
 
     return false;
@@ -717,7 +717,7 @@ async function studentVerifyCode(event) {
 
     showFormError(
       errorEl,
-      'Expired na ang code. I-click ang "I-resend ang code".'
+      'The code has expired. Click "Resend code".'
     );
 
     return false;
@@ -730,7 +730,7 @@ async function studentVerifyCode(event) {
 
     showFormError(
       errorEl,
-      'Maling code. Subukan ulit.'
+      'Incorrect code. Please try again.'
     );
 
     return false;
@@ -744,7 +744,7 @@ async function studentVerifyCode(event) {
 
   setButtonLoading(
     btn,
-    'Gumagawa ng account...'
+    'Creating account...'
   );
 
 
@@ -808,7 +808,7 @@ async function studentVerifyCode(event) {
 
     resetButtonLoading(
       btn,
-      'I-verify ang Code'
+      'Verify Code'
     );
   }
 
@@ -853,7 +853,7 @@ async function resendStudentCode() {
 
 
     showToast(
-      'Naipadala ulit ang code.'
+      'The code has been resent.'
     );
 
 
@@ -862,7 +862,7 @@ async function resendStudentCode() {
   } catch (err) {
 
     showToast(
-      'Hindi na-resend, subukan ulit.'
+      'Could not resend, please try again.'
     );
   }
 }
@@ -902,7 +902,7 @@ async function studentLogin(event) {
 
     showFormError(
       errorEl,
-      'Kailangang punan ang email at password.'
+      'Please fill in email and password.'
     );
 
     return false;
@@ -989,7 +989,7 @@ async function studentForgotPassword(event) {
 
     showFormError(
       errorEl,
-      'Ilagay ang email address mo.'
+      'Enter your email address.'
     );
 
     return false;
@@ -1000,7 +1000,7 @@ async function studentForgotPassword(event) {
 
     showFormError(
       errorEl,
-      'Hindi wastong email address.'
+      'Invalid email address.'
     );
 
     return false;
@@ -1041,7 +1041,7 @@ async function studentForgotPassword(event) {
 
       showFormError(
         errorEl,
-        'Wala pang registered student account gamit ang email na ito. Mag-sign up muna.'
+        'There is no registered student account using this email yet. Please sign up first.'
       );
 
       return false;
@@ -1107,7 +1107,7 @@ async function studentForgotPassword(event) {
 
 
     showToast(
-      'Naipadala na ang 6-digit code sa Gmail mo!'
+      'The 6-digit code has been sent to your Gmail!'
     );
 
 
@@ -1122,7 +1122,7 @@ async function studentForgotPassword(event) {
     showFormError(
       errorEl,
       err.message ||
-      'Hindi ma-check ang account. Subukan ulit.'
+      'Could not check the account. Please try again.'
     );
 
   } finally {
@@ -1164,7 +1164,7 @@ function verifyStudentForgotCode(event) {
 
     showFormError(
       errorEl,
-      'Ilagay ang valid na 6-digit code.'
+      'Enter a valid 6-digit code.'
     );
 
     return false;
@@ -1175,7 +1175,7 @@ function verifyStudentForgotCode(event) {
 
     showFormError(
       errorEl,
-      'Walang active verification code. Mag-request ulit.'
+      'No active verification code. Please request again.'
     );
 
     return false;
@@ -1189,7 +1189,7 @@ function verifyStudentForgotCode(event) {
 
     showFormError(
       errorEl,
-      'Expired na ang code. Mag-request ng bagong code.'
+      'The code has expired. Request a new code.'
     );
 
     return false;
@@ -1203,7 +1203,7 @@ function verifyStudentForgotCode(event) {
 
     showFormError(
       errorEl,
-      'Mali ang verification code.'
+      'Incorrect verification code.'
     );
 
     return false;
@@ -1303,7 +1303,7 @@ async function resendStudentForgotCode() {
 
 
     showToast(
-      'Bagong code ang ipinadala sa Gmail mo!'
+      'A new code has been sent to your Gmail!'
     );
 
 
@@ -1312,7 +1312,7 @@ async function resendStudentForgotCode() {
     console.error(err);
 
     showToast(
-      'Hindi naipadala ang bagong code.'
+      'The new code could not be sent.'
     );
   }
 
@@ -1378,7 +1378,7 @@ async function saveStudentNewPassword(event) {
 
     showFormError(
       errorEl,
-      'Expired na ang verification. Mag-request ulit ng code.'
+      'The verification has expired. Please request a new code.'
     );
 
     return false;
@@ -1401,7 +1401,7 @@ async function saveStudentNewPassword(event) {
 
     showFormError(
       errorEl,
-      'Ang password ay dapat hindi bababa sa 6 characters.'
+      'Password must be at least 6 characters.'
     );
 
     return false;
@@ -1412,7 +1412,7 @@ async function saveStudentNewPassword(event) {
 
     showFormError(
       errorEl,
-      'Hindi magkapareho ang dalawang password.'
+      'The two passwords do not match.'
     );
 
     return false;
@@ -1514,7 +1514,7 @@ async function saveStudentNewPassword(event) {
     showFormError(
       errorEl,
       err.message ||
-      'Hindi ma-update ang password. Subukan ulit.'
+      'Could not update the password. Please try again.'
     );
 
   } finally {
@@ -1619,7 +1619,7 @@ async function canteenSignupStart(event) {
 
     showFormError(
       errorEl,
-      'Kailangang punan lahat ng fields.'
+      'Please fill in all fields.'
     );
 
     return false;
@@ -1630,7 +1630,7 @@ async function canteenSignupStart(event) {
 
     showFormError(
       errorEl,
-      'Hindi magkatugma ang password at confirm password.'
+      'Password and confirm password do not match.'
     );
 
     return false;
@@ -1641,7 +1641,7 @@ async function canteenSignupStart(event) {
 
     showFormError(
       errorEl,
-      'Kailangan ng password na hindi bababa sa 6 characters.'
+      'Password must be at least 6 characters.'
     );
 
     return false;
@@ -1670,7 +1670,7 @@ async function canteenSignupStart(event) {
 
   setButtonLoading(
     btn,
-    'Nagpapadala ng code...'
+    'Sending code...'
   );
 
 
@@ -1731,7 +1731,7 @@ async function canteenSignupStart(event) {
 
     showFormError(
       errorEl,
-      'Hindi na-send ang code. Tingnan ang EmailJS setup mo, o subukan ulit.'
+      'The code could not be sent. Check your EmailJS setup, or try again.'
     );
 
   } finally {
@@ -1777,7 +1777,7 @@ async function canteenVerifyCode(event) {
 
     showFormError(
       errorEl,
-      'May problema, subukan ulit mag-sign up.'
+      'Something went wrong, please try signing up again.'
     );
 
     return false;
@@ -1791,7 +1791,7 @@ async function canteenVerifyCode(event) {
 
     showFormError(
       errorEl,
-      'Expired na ang code. I-click ang "I-resend ang code".'
+      'The code has expired. Click "Resend code".'
     );
 
     return false;
@@ -1804,7 +1804,7 @@ async function canteenVerifyCode(event) {
 
     showFormError(
       errorEl,
-      'Maling code. Subukan ulit.'
+      'Incorrect code. Please try again.'
     );
 
     return false;
@@ -1819,7 +1819,7 @@ async function canteenVerifyCode(event) {
 
   setButtonLoading(
     btn,
-    'Gumagawa ng account...'
+    'Creating account...'
   );
 
 
@@ -1900,7 +1900,7 @@ async function canteenVerifyCode(event) {
 
     resetButtonLoading(
       btn,
-      'I-verify ang Code'
+      'Verify Code'
     );
   }
 
@@ -1949,7 +1949,7 @@ async function resendCanteenCode() {
 
 
     showToast(
-      'Naipadala ulit ang code.'
+      'The code has been resent.'
     );
 
 
@@ -1959,7 +1959,7 @@ async function resendCanteenCode() {
   } catch (err) {
 
     showToast(
-      'Hindi na-resend, subukan ulit.'
+      'Could not resend, please try again.'
     );
   }
 }
@@ -2000,7 +2000,7 @@ async function canteenLogin(event) {
 
     showFormError(
       errorEl,
-      'Kailangang punan ang email at password.'
+      'Please fill in email and password.'
     );
 
     return false;
@@ -2091,7 +2091,7 @@ async function canteenForgotPassword(event) {
 
     showFormError(
       errorEl,
-      'Ilagay ang canteen email address.'
+      'Enter the canteen email address.'
     );
 
     return false;
@@ -2102,7 +2102,7 @@ async function canteenForgotPassword(event) {
 
     showFormError(
       errorEl,
-      'Hindi wastong email address.'
+      'Invalid email address.'
     );
 
     return false;
@@ -2145,7 +2145,7 @@ async function canteenForgotPassword(event) {
 
       showFormError(
         errorEl,
-        'Wala pang registered canteen account gamit ang email na ito. Mag-sign up muna.'
+        'There is no registered canteen account using this email yet. Please sign up first.'
       );
 
       return false;
@@ -2207,7 +2207,7 @@ async function canteenForgotPassword(event) {
 
 
     showToast(
-      'Naipadala na ang 6-digit code sa Gmail!'
+      'The 6-digit code has been sent to your Gmail!'
     );
 
 
@@ -2222,7 +2222,7 @@ async function canteenForgotPassword(event) {
     showFormError(
       errorEl,
       err.message ||
-      'Hindi ma-check ang account. Subukan ulit.'
+      'Could not check the account. Please try again.'
     );
 
 
@@ -2266,7 +2266,7 @@ function verifyCanteenForgotCode(event) {
 
     showFormError(
       errorEl,
-      'Ilagay ang valid na 6-digit code.'
+      'Enter a valid 6-digit code.'
     );
 
     return false;
@@ -2277,7 +2277,7 @@ function verifyCanteenForgotCode(event) {
 
     showFormError(
       errorEl,
-      'Walang active verification code. Mag-request ulit.'
+      'No active verification code. Please request again.'
     );
 
     return false;
@@ -2291,7 +2291,7 @@ function verifyCanteenForgotCode(event) {
 
     showFormError(
       errorEl,
-      'Expired na ang code. Mag-request ng bagong code.'
+      'The code has expired. Request a new code.'
     );
 
     return false;
@@ -2305,7 +2305,7 @@ function verifyCanteenForgotCode(event) {
 
     showFormError(
       errorEl,
-      'Mali ang verification code.'
+      'Incorrect verification code.'
     );
 
     return false;
@@ -2405,7 +2405,7 @@ async function resendCanteenForgotCode() {
 
 
     showToast(
-      'Bagong code ang ipinadala sa Gmail!'
+      'A new code has been sent to your Gmail!'
     );
 
 
@@ -2414,7 +2414,7 @@ async function resendCanteenForgotCode() {
     console.error(err);
 
     showToast(
-      'Hindi naipadala ang bagong code.'
+      'The new code could not be sent.'
     );
   }
 
@@ -2480,7 +2480,7 @@ async function saveCanteenNewPassword(event) {
 
     showFormError(
       errorEl,
-      'Expired na ang verification. Mag-request ulit ng code.'
+      'The verification has expired. Please request a new code.'
     );
 
     return false;
@@ -2503,7 +2503,7 @@ async function saveCanteenNewPassword(event) {
 
     showFormError(
       errorEl,
-      'Ang password ay dapat hindi bababa sa 6 characters.'
+      'Password must be at least 6 characters.'
     );
 
     return false;
@@ -2514,7 +2514,7 @@ async function saveCanteenNewPassword(event) {
 
     showFormError(
       errorEl,
-      'Hindi magkapareho ang dalawang password.'
+      'The two passwords do not match.'
     );
 
     return false;
@@ -2616,7 +2616,7 @@ async function saveCanteenNewPassword(event) {
     showFormError(
       errorEl,
       err.message ||
-      'Hindi ma-update ang password. Subukan ulit.'
+      'Could not update the password. Please try again.'
     );
 
 

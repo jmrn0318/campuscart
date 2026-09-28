@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 
 const { initializeApp, cert } = require("firebase-admin/app");
 const { getAuth } = require("firebase-admin/auth");
@@ -19,9 +20,28 @@ const firebaseApp = initializeApp({
 
 const auth = getAuth(firebaseApp);
 
+// ========================================
+// MIDDLEWARE
+// ========================================
+
 app.use(cors());
 app.use(express.json());
+
+// Serve files from main CampusCart folder
 app.use(express.static(__dirname));
+
+// Serve files from Student folder
+app.use(express.static(path.join(__dirname, "Student")));
+
+// ========================================
+// STUDENT DASHBOARD PAGE
+// ========================================
+
+app.get("/student-dashboard.html", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "Student", "student-dashboard.html")
+  );
+});
 
 // ========================================
 // CHECK REGISTERED ACCOUNT

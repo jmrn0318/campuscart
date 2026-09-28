@@ -49,9 +49,6 @@
     <div class="eyebrow">CAMPUS CART</div>
     <h1 class="headline">Good Food,<br><span>Made Easier</span></h1>
     <p>Pre-order your favorite meals, skip the long lines, and enjoy a faster, safer, and more convenient campus food experience.</p>
-    <div class="hero-buttons">
-      <button class="btn btn-green" onclick="openRoleSelect('signup')">Get Started <svg><use href="#icon-arrow"></use></svg></button>
-    </div>
   </div>
 
   <a href="#how-it-works" class="scroll-cue nav-link" data-target="how-it-works" aria-label="Scroll to how it works">
@@ -186,7 +183,7 @@
         <div class="field">
           <label>Password</label>
           <div class="input-wrap"><span class="icon"><svg><use href="#icon-lock"></use></svg></span><input type="password" id="student-signup-password" placeholder="Create a password" minlength="6" required><button type="button" class="eye"><svg><use href="#icon-eye"></use></svg></button></div>
-          <p class="field-hint">Hindi bababa sa 6 characters.</p>
+          <p class="field-hint">Must be at least 6 characters.</p>
         </div>
         <div class="field">
           <label>Confirm Password</label>
@@ -200,8 +197,8 @@
     <!-- Panel 2: enter the code that arrived in Gmail -->
     <div id="student-verify-panel" style="display:none;">
       <div class="lock-badge"><svg><use href="#icon-shield"></use></svg></div>
-      <h2>Ilagay ang Verification Code</h2>
-      <p class="subtitle">Nagpadala kami ng 6-digit code sa <strong id="student-verify-email-label"></strong>. Buksan ang Gmail app o inbox mo at ilagay ang code dito.</p>
+      <h2>Enter the Verification Code</h2>
+      <p class="subtitle">We sent a 6-digit code to <strong id="student-verify-email-label"></strong>. Open your Gmail app or inbox and enter the code here.</p>
       <p class="form-error" id="student-verify-error"></p>
 
       <form id="student-verify-form" onsubmit="return studentVerifyCode(event)" novalidate>
@@ -209,20 +206,20 @@
           <label>6-Digit Code</label>
           <input type="text" id="student-verify-code" class="code-input" maxlength="6" inputmode="numeric" pattern="[0-9]*" placeholder="000000" autocomplete="one-time-code" required>
         </div>
-        <button type="submit" class="btn btn-green btn-block">I-verify ang Code <svg><use href="#icon-arrow"></use></svg></button>
+        <button type="submit" class="btn btn-green btn-block">Verify Code <svg><use href="#icon-arrow"></use></svg></button>
       </form>
       <p class="foot-link">
-        Walang natanggap? <a href="#" id="student-resend-link" onclick="resendStudentCode();return false;">I-resend ang code</a>
+        Didn't receive anything? <a href="#" id="student-resend-link" onclick="resendStudentCode();return false;">Resend the code</a>
       </p>
-      <p class="foot-link"><a href="#" onclick="showAuthView('student-signup');return false;"><svg style="display:inline;width:12px;height:12px;vertical-align:middle;"><use href="#icon-arrow-left"></use></svg> Baguhin ang email</a></p>
+      <p class="foot-link"><a href="#" onclick="showAuthView('student-signup');return false;"><svg style="display:inline;width:12px;height:12px;vertical-align:middle;"><use href="#icon-arrow-left"></use></svg> Change email</a></p>
     </div>
 
     <!-- Panel 3: done -->
     <div id="student-success-panel" class="success-state" style="display:none;">
       <div class="lock-badge success-badge"><svg><use href="#icon-check-circle"></use></svg></div>
       <h2 id="student-success-title">Verified!</h2>
-      <p class="subtitle">Nagawa na ang account mo. Pwede ka nang mag-login.</p>
-      <button class="btn btn-green btn-block" onclick="showAuthView('student-login')">Pumunta sa Login <svg><use href="#icon-arrow"></use></svg></button>
+      <p class="subtitle">Your account has been created. You can now log in.</p>
+      <button class="btn btn-green btn-block" onclick="showAuthView('student-login')">Go to Login <svg><use href="#icon-arrow"></use></svg></button>
     </div>
   </div>
 
@@ -357,7 +354,7 @@
         <div class="field">
           <label>Canteen Password</label>
           <div class="input-wrap"><span class="icon"><svg><use href="#icon-lock"></use></svg></span><input type="password" id="canteen-password" placeholder="Create a password" minlength="6" required><button type="button" class="eye"><svg><use href="#icon-eye"></use></svg></button></div>
-          <p class="field-hint">Hindi bababa sa 6 characters.</p>
+          <p class="field-hint">Must be at least 6 characters.</p>
         </div>
         <div class="field">
           <label>Confirm Password</label>
@@ -377,8 +374,8 @@
     <!-- Panel 2: enter the code that arrived in Gmail -->
     <div id="canteen-verify-panel" style="display:none;">
       <div class="lock-badge"><svg><use href="#icon-shield"></use></svg></div>
-      <h2>Ilagay ang Verification Code</h2>
-      <p class="subtitle">Nagpadala kami ng 6-digit code sa <strong id="canteen-verify-email-label"></strong>. Buksan ang Gmail at ilagay ang code dito.</p>
+      <h2>Enter the Verification Code</h2>
+      <p class="subtitle">We sent a 6-digit code to <strong id="canteen-verify-email-label"></strong>. Open your Gmail and enter the code here.</p>
       <p class="form-error" id="canteen-verify-error"></p>
 
       <form id="canteen-verify-form" onsubmit="return canteenVerifyCode(event)" novalidate>
@@ -386,19 +383,19 @@
           <label>6-Digit Code</label>
           <input type="text" id="canteen-verify-code" class="code-input" maxlength="6" inputmode="numeric" pattern="[0-9]*" placeholder="000000" autocomplete="one-time-code" required>
         </div>
-        <button type="submit" class="btn btn-green btn-block">I-verify ang Code <svg><use href="#icon-arrow"></use></svg></button>
+        <button type="submit" class="btn btn-green btn-block">Verify Code <svg><use href="#icon-arrow"></use></svg></button>
       </form>
       <p class="foot-link">
-        Walang natanggap? <a href="#" id="canteen-resend-link" onclick="resendCanteenCode();return false;">I-resend ang code</a>
+        Didn't receive anything? <a href="#" id="canteen-resend-link" onclick="resendCanteenCode();return false;">Resend the code</a>
       </p>
-      <p class="foot-link"><a href="#" onclick="showAuthView('canteen-signup');return false;"><svg style="display:inline;width:12px;height:12px;vertical-align:middle;"><use href="#icon-arrow-left"></use></svg> Baguhin ang email</a></p>
+      <p class="foot-link"><a href="#" onclick="showAuthView('canteen-signup');return false;"><svg style="display:inline;width:12px;height:12px;vertical-align:middle;"><use href="#icon-arrow-left"></use></svg> Change email</a></p>
     </div>
 
     <!-- Panel 3: done -->
     <div id="canteen-success" class="success-state" style="display:none;">
       <div class="lock-badge success-badge"><svg><use href="#icon-check-circle"></use></svg></div>
       <h2 id="canteen-success-title">Canteen account created!</h2>
-      <p class="subtitle">Verified na ang email ng canteen. Pwede ka nang mag-login.</p>
+      <p class="subtitle">Your canteen email has been verified. You can now log in.</p>
       <button class="btn btn-green btn-block" onclick="showAuthView('canteen-login')">Go to Canteen Login <svg><use href="#icon-arrow"></use></svg></button>
     </div>
   </div>

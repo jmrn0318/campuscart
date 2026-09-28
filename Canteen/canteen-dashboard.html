@@ -59,11 +59,11 @@
 
       <div class="dash-nav-divider"></div>
 
-      <div class="dash-nav-item is-soon"><svg><use href="#i-package"></use></svg><span>Order Management</span><span class="dash-nav-soon-tag">SOON</span></div>
-      <div class="dash-nav-item is-soon"><svg><use href="#i-clock"></use></svg><span>Order History</span><span class="dash-nav-soon-tag">SOON</span></div>
-      <div class="dash-nav-item is-soon"><svg><use href="#i-chart"></use></svg><span>Sales &amp; Reports</span><span class="dash-nav-soon-tag">SOON</span></div>
-      <div class="dash-nav-item is-soon"><svg><use href="#i-bulb"></use></svg><span>Student Suggestions</span><span class="dash-nav-soon-tag">SOON</span></div>
-      <div class="dash-nav-item is-soon"><svg><use href="#i-bell"></use></svg><span>Notifications</span><span class="dash-nav-soon-tag">SOON</span></div>
+      <button class="dash-nav-item" data-view="orders-view" onclick="showView('orders-view', this)"><svg><use href="#i-package"></use></svg><span>Order Management</span><span class="dash-nav-count" id="nav-orders-count" style="display:none;">0</span></button>
+      <button class="dash-nav-item" data-view="history-view" onclick="showView('history-view', this)"><svg><use href="#i-clock"></use></svg><span>Order History</span></button>
+      <button class="dash-nav-item" data-view="reports-view" onclick="showView('reports-view', this)"><svg><use href="#i-chart"></use></svg><span>Sales &amp; Reports</span></button>
+      <button class="dash-nav-item" data-view="suggestions-view" onclick="showView('suggestions-view', this)"><svg><use href="#i-bulb"></use></svg><span>Student Suggestions</span><span class="dash-nav-count" id="nav-suggestions-count" style="display:none;">0</span></button>
+      <button class="dash-nav-item" data-view="notifications-view" onclick="showView('notifications-view', this)"><svg><use href="#i-bell"></use></svg><span>Notifications</span><span class="dash-nav-count" id="nav-notif-count" style="display:none;">0</span></button>
 
       <div class="dash-nav-divider"></div>
 
@@ -94,21 +94,20 @@
       <section class="dash-view active" id="dashboard-view">
 
         <div class="stat-grid">
-          <div class="stat-card"><div class="stat-card-icon"><svg><use href="#i-chart"></use></svg></div><div class="stat-card-label">Today's Orders</div><div class="stat-card-value">0</div></div>
-          <div class="stat-card"><div class="stat-card-icon"><svg><use href="#i-clock"></use></svg></div><div class="stat-card-label">Pending</div><div class="stat-card-value">0</div></div>
-          <div class="stat-card"><div class="stat-card-icon"><svg><use href="#i-food"></use></svg></div><div class="stat-card-label">Preparing</div><div class="stat-card-value">0</div></div>
-          <div class="stat-card"><div class="stat-card-icon"><svg><use href="#i-check"></use></svg></div><div class="stat-card-label">Ready for Pickup</div><div class="stat-card-value">0</div></div>
-          <div class="stat-card accent"><div class="stat-card-icon"><svg><use href="#i-check"></use></svg></div><div class="stat-card-label">Completed Today</div><div class="stat-card-value">0</div></div>
-          <div class="stat-card accent"><div class="stat-card-icon"><svg><use href="#i-peso"></use></svg></div><div class="stat-card-label">Today's Sales</div><div class="stat-card-value">₱0</div></div>
+          <div class="stat-card" id="stat-today"><div class="stat-card-icon"><svg><use href="#i-chart"></use></svg></div><div class="stat-card-label">Today's Orders</div><div class="stat-card-value">0</div></div>
+          <div class="stat-card" id="stat-pending"><div class="stat-card-icon"><svg><use href="#i-clock"></use></svg></div><div class="stat-card-label">Pending</div><div class="stat-card-value">0</div></div>
+          <div class="stat-card" id="stat-preparing"><div class="stat-card-icon"><svg><use href="#i-food"></use></svg></div><div class="stat-card-label">Preparing</div><div class="stat-card-value">0</div></div>
+          <div class="stat-card" id="stat-ready"><div class="stat-card-icon"><svg><use href="#i-check"></use></svg></div><div class="stat-card-label">Ready for Pickup</div><div class="stat-card-value">0</div></div>
+          <div class="stat-card accent" id="stat-completed"><div class="stat-card-icon"><svg><use href="#i-check"></use></svg></div><div class="stat-card-label">Completed Today</div><div class="stat-card-value">0</div></div>
+          <div class="stat-card accent" id="stat-sales"><div class="stat-card-icon"><svg><use href="#i-peso"></use></svg></div><div class="stat-card-label">Today's Sales</div><div class="stat-card-value">₱0</div></div>
           <div class="stat-card" id="stat-active-items"><div class="stat-card-icon"><svg><use href="#i-grid"></use></svg></div><div class="stat-card-label">Active Menu Items</div><div class="stat-card-value">0</div></div>
           <div class="stat-card warn" id="stat-low-stock"><div class="stat-card-icon"><svg><use href="#i-warning"></use></svg></div><div class="stat-card-label">Low Stock / Unavailable</div><div class="stat-card-value">0</div></div>
         </div>
 
         <div class="dash-panel">
-          <div class="dash-panel-head"><h2>Recent Orders</h2></div>
-          <div class="empty-state">
-            <svg><use href="#i-inbox"></use></svg>
-            Wala pang orders. Malalaman mo dito agad kapag may nag-order na student — kasama ng Order Management (susunod na phase).
+          <div class="dash-panel-head"><h2>Recent Orders</h2><a href="#" class="view-all-link" onclick="showView('orders-view', document.querySelector('[data-view=orders-view]')); return false;">View all</a></div>
+          <div id="recent-orders">
+            <div class="empty-state"><svg><use href="#i-inbox"></use></svg>No orders yet.</div>
           </div>
         </div>
 
@@ -155,7 +154,7 @@
 
             <div class="empty-state" id="menu-empty" style="display:none;">
               <svg><use href="#i-food"></use></svg>
-              Wala ka pang naidadagdag na food item. I-click ang "Add Food" para magsimula.
+              You have not added any food items yet. Click "Add Food" to get started.
             </div>
           </div>
 
@@ -166,7 +165,7 @@
           <aside class="dash-panel food-panel" id="food-panel">
             <button class="close-btn food-panel-reset" title="Close" onclick="closeFoodModal()"><svg><use href="#i-x"></use></svg></button>
             <h2 id="food-modal-title">Add Food Item</h2>
-            <p class="subtitle" id="food-modal-subtitle">Ilagay ang detalye ng food item na ilalagay sa iyong menu.</p>
+            <p class="subtitle" id="food-modal-subtitle">Enter the details of the food item to add to your menu.</p>
             <p class="form-error" id="food-error"></p>
 
             <form id="food-form" onsubmit="return saveFood(event)" novalidate>
@@ -227,6 +226,98 @@
           </aside>
         </div>
 
+      </section>
+
+      <!-- ============ ORDER MANAGEMENT VIEW ============ -->
+      <section class="dash-view" id="orders-view">
+        <div class="dash-panel">
+          <div class="dash-panel-head"><h2>Active Orders</h2><span class="status-pill neutral" id="orders-active-count">0 active</span></div>
+          <div id="orders-list">
+            <div class="empty-state"><svg><use href="#i-inbox"></use></svg>No active orders yet.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ ORDER HISTORY VIEW ============ -->
+      <section class="dash-view" id="history-view">
+        <div class="dash-panel">
+          <div class="dash-panel-head"><h2>Completed &amp; Cancelled Orders</h2><span class="status-pill neutral" id="history-count">0 orders</span></div>
+          <div id="history-list">
+            <div class="empty-state"><svg><use href="#i-inbox"></use></svg>No order history yet.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ SALES & REPORTS VIEW ============ -->
+      <section class="dash-view" id="reports-view">
+
+        <div class="rep-toolbar">
+          <div class="menu-cat-select">
+            <select id="report-range" onchange="setReportRange(this.value)" aria-label="Report period">
+              <option value="today">Today</option>
+              <option value="7d" selected>Last 7 days</option>
+              <option value="30d">Last 30 days</option>
+              <option value="all">All time</option>
+            </select>
+            <svg><use href="#i-chevron-down"></use></svg>
+          </div>
+          <button type="button" class="btn btn-green btn-sm" onclick="exportSalesCsv()"><svg><use href="#i-list"></use></svg> Export CSV</button>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-card accent" id="rep-sales"><div class="stat-card-icon"><svg><use href="#i-peso"></use></svg></div><div class="stat-card-label">Total Sales</div><div class="stat-card-value">₱0.00</div></div>
+          <div class="stat-card" id="rep-completed"><div class="stat-card-icon"><svg><use href="#i-check"></use></svg></div><div class="stat-card-label">Completed Orders</div><div class="stat-card-value">0</div></div>
+          <div class="stat-card" id="rep-avg"><div class="stat-card-icon"><svg><use href="#i-chart"></use></svg></div><div class="stat-card-label">Average Order</div><div class="stat-card-value">₱0.00</div></div>
+          <div class="stat-card warn" id="rep-cancelled"><div class="stat-card-icon"><svg><use href="#i-x"></use></svg></div><div class="stat-card-label">Cancelled Orders</div><div class="stat-card-value">0</div></div>
+        </div>
+
+        <div class="dash-panel">
+          <div class="dash-panel-head"><h2 id="rep-chart-title">Sales</h2></div>
+          <div id="rep-chart"></div>
+          <p class="rep-note">Sales count completed orders only, dated by the time they were completed.</p>
+        </div>
+
+        <div class="rep-grid">
+          <div class="dash-panel">
+            <div class="dash-panel-head"><h2>Top Selling Items</h2></div>
+            <div id="rep-top-items"></div>
+          </div>
+          <div class="dash-panel">
+            <div class="dash-panel-head"><h2>Orders by Status</h2></div>
+            <div id="rep-status"></div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ============ STUDENT SUGGESTIONS VIEW ============ -->
+      <section class="dash-view" id="suggestions-view">
+        <div class="dash-panel">
+          <div class="dash-panel-head"><h2>Student Suggestions</h2><span class="status-pill neutral" id="sugg-count">0 suggestions</span></div>
+          <div class="sugg-filters" id="sugg-filters">
+            <button type="button" class="sugg-filter active" data-sugg="all" onclick="setSuggestionFilter('all')">All</button>
+            <button type="button" class="sugg-filter" data-sugg="pending" onclick="setSuggestionFilter('pending')">Pending</button>
+            <button type="button" class="sugg-filter" data-sugg="reviewed" onclick="setSuggestionFilter('reviewed')">Reviewed</button>
+            <button type="button" class="sugg-filter" data-sugg="accepted" onclick="setSuggestionFilter('accepted')">Accepted</button>
+            <button type="button" class="sugg-filter" data-sugg="rejected" onclick="setSuggestionFilter('rejected')">Rejected</button>
+          </div>
+          <div id="suggestions-list">
+            <div class="empty-state"><svg><use href="#i-inbox"></use></svg>No suggestions yet.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ NOTIFICATIONS VIEW ============ -->
+      <section class="dash-view" id="notifications-view">
+        <div class="dash-panel">
+          <div class="dash-panel-head">
+            <h2>Notifications</h2>
+            <button type="button" class="btn btn-green btn-sm" onclick="markNotificationsRead()">Mark all as read</button>
+          </div>
+          <div id="notif-list">
+            <div class="empty-state"><svg><use href="#i-bell"></use></svg>No notifications yet.</div>
+          </div>
+        </div>
       </section>
 
       <!-- ============ CANTEEN PROFILE VIEW ============ -->

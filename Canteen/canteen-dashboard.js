@@ -32,6 +32,13 @@ let menuItems = [];
 let activeCategory = 'all';
 let searchQuery = '';
 let menuUnsub = null;
+let orders = [];          // orders where canteenId == uid
+let ordersUnsub = null;
+let ordersLoaded = false;
+let suggestions = [];     // suggestions where canteenId == uid
+let suggestionsUnsub = null;
+let suggestionFilter = 'all';
+let reportRange = '7d';
 
 
 /* ============ AUTH GUARD ============ */
@@ -61,6 +68,8 @@ auth.onAuthStateChanged(async (user) => {
   // right now, the menu list will still populate once it reconnects —
   // instead of never loading at all if the profile fetch below fails.
   listenToMenuItems(user.uid);
+  listenToOrders(user.uid);
+  listenToSuggestions(user.uid);
 
   try {
 
@@ -77,7 +86,7 @@ auth.onAuthStateChanged(async (user) => {
 
     if (studentDoc.exists) {
 
-      showToast('Student account ito, hindi canteen.');
+      showToast('This is a student account, not a canteen account.');
 
       await auth.signOut();
 
@@ -135,13 +144,13 @@ auth.onAuthStateChanged(async (user) => {
 
     applyProfileToUI(fallbackProfile, user);
 
-    showToast('Na-recover ang canteen profile mo.');
+    showToast('Your canteen profile was recovered.');
 
   } catch (err) {
 
     console.error(err);
 
-    showToast('Hindi ma-load ang canteen data.');
+    showToast('Could not load canteen data.');
   }
 });
 
@@ -201,7 +210,32 @@ function showView(viewId, navEl) {
 
     'dashboard-view': [
       'Dashboard',
-      'Buod ng iyong canteen ngayong araw.'
+      'Summary of your canteen today.'
+    ],
+
+    'orders-view': [
+      'Order Management',
+      'Accept orders and update their status.'
+    ],
+
+    'history-view': [
+      'Order History',
+      'Completed and cancelled orders.'
+    ],
+
+    'reports-view': [
+      'Sales & Reports',
+      'View your sales, top items and order trends.'
+    ],
+
+    'suggestions-view': [
+      'Student Suggestions',
+      'Suggestions from students for your canteen.'
+    ],
+
+    'notifications-view': [
+      'Notifications',
+      'New orders, cancellations and suggestions.'
     ],
 
     'menu-view': [
@@ -383,7 +417,7 @@ function setBannerPreview(url) {
 
 async function removeAvatar() {
 
-  if (!confirm('Alisin ang profile picture ng canteen mo?')) {
+  if (!confirm('Remove your canteen profile picture?')) {
     return;
   }
 
@@ -396,19 +430,19 @@ async function removeAvatar() {
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    showToast('Naalis ang profile picture.');
+    showToast('Profile picture removed.');
 
   } catch (err) {
 
     console.error(err);
 
-    showToast('Hindi na-alis ang profile picture.');
+    showToast('Could not remove the profile picture.');
   }
 }
 
 async function removeBanner() {
 
-  if (!confirm('Alisin ang banner ng canteen mo?')) {
+  if (!confirm('Remove your canteen banner?')) {
     return;
   }
 
@@ -421,13 +455,13 @@ async function removeBanner() {
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     });
 
-    showToast('Naalis ang banner.');
+    showToast('Banner removed.');
 
   } catch (err) {
 
     console.error(err);
 
-    showToast('Hindi na-alis ang banner.');
+    showToast('Could not remove the banner.');
   }
 }
 
@@ -444,7 +478,7 @@ async function handleAvatarUpload(event) {
     file.type === 'image/jpeg';
 
   if (!isImage) {
-    showToast('PNG o JPG lang ang tinatanggap na image.');
+    showToast('Only PNG or JPG images are accepted.');
     event.target.value = '';
     return;
   }
@@ -452,7 +486,7 @@ async function handleAvatarUpload(event) {
   const maxSizeBytes = 5 * 1024 * 1024;
 
   if (file.size > maxSizeBytes) {
-    showToast('Masyadong malaki ang image. 5MB max lang.');
+    showToast('Image is too large. Maximum size is 5MB.');
     event.target.value = '';
     return;
   }
@@ -471,17 +505,17 @@ async function handleAvatarUpload(event) {
           updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        showToast('Na-update ang profile picture.');
+        showToast('Profile picture updated.');
 
       } catch (err) {
 
         console.error(err);
 
-        showToast('Hindi na-save ang profile picture.');
+        showToast('Could not save the profile picture.');
       }
     },
     () => {
-      showToast('Hindi ma-process ang image na ito. Subukan ng ibang file.');
+      showToast('Could not process this image. Try a different file.');
     }
   );
 
@@ -501,7 +535,7 @@ async function handleBannerUpload(event) {
     file.type === 'image/jpeg';
 
   if (!isImage) {
-    showToast('PNG o JPG lang ang tinatanggap na image.');
+    showToast('Only PNG or JPG images are accepted.');
     event.target.value = '';
     return;
   }
@@ -509,7 +543,7 @@ async function handleBannerUpload(event) {
   const maxSizeBytes = 5 * 1024 * 1024;
 
   if (file.size > maxSizeBytes) {
-    showToast('Masyadong malaki ang image. 5MB max lang.');
+    showToast('Image is too large. Maximum size is 5MB.');
     event.target.value = '';
     return;
   }
@@ -528,17 +562,17 @@ async function handleBannerUpload(event) {
           updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        showToast('Na-update ang banner.');
+        showToast('Banner updated.');
 
       } catch (err) {
 
         console.error(err);
 
-        showToast('Hindi na-save ang banner.');
+        showToast('Could not save the banner.');
       }
     },
     () => {
-      showToast('Hindi ma-process ang image na ito. Subukan ng ibang file.');
+      showToast('Could not process this image. Try a different file.');
     }
   );
 
@@ -693,8 +727,8 @@ async function onStatusToggle(checkbox) {
 
     showToast(
       checkbox.checked
-        ? 'Bukas na ang canteen mo.'
-        : 'Sarado na ang canteen mo.'
+        ? 'Your canteen is now open.'
+        : 'Your canteen is now closed.'
     );
 
   } catch (err) {
@@ -705,7 +739,7 @@ async function onStatusToggle(checkbox) {
       !checkbox.checked;
 
     showToast(
-      'Hindi na-update ang status.'
+      'Could not update the status.'
     );
   }
 }
@@ -736,7 +770,7 @@ async function saveProfile(event) {
 
     showFormError(
       errorEl,
-      'Kailangan ng pangalan ng canteen.'
+      'Canteen name is required.'
     );
 
     return false;
@@ -817,7 +851,7 @@ async function saveProfile(event) {
 
 
     showToast(
-      'Na-save ang profile ng canteen!'
+      'Canteen profile saved!'
     );
 
   } catch (err) {
@@ -826,7 +860,7 @@ async function saveProfile(event) {
 
     showFormError(
       errorEl,
-      'Hindi na-save ang profile. Subukan ulit.'
+      'Could not save the profile. Please try again.'
     );
 
   } finally {
@@ -878,10 +912,582 @@ function listenToMenuItems(uid) {
           console.error(err);
 
           showToast(
-            'Hindi ma-load ang menu items.'
+            'Could not load menu items.'
           );
         }
       );
+}
+
+
+/* ============ ORDERS (real-time, from students' checkout) ============ */
+
+const ACTIVE_STATUSES = ['pending', 'confirmed', 'preparing', 'ready'];
+
+// pending -> preparing -> ready -> completed
+// (we skip "confirmed" on purpose: Firestore rules only let a student
+//  cancel while the order is pending or preparing)
+const NEXT_STATUS = {
+  pending:   { to: 'preparing', label: 'Accept & Prepare' },
+  confirmed: { to: 'preparing', label: 'Start Preparing' },
+  preparing: { to: 'ready',     label: 'Mark Ready' },
+  ready:     { to: 'completed', label: 'Mark Completed' }
+};
+
+const STATUS_LABELS = {
+  pending: 'Pending',
+  confirmed: 'Confirmed',
+  preparing: 'Preparing',
+  ready: 'Ready for Pickup',
+  completed: 'Completed',
+  cancelled: 'Cancelled'
+};
+
+function pesos(n) {
+  return '₱' + Number(n || 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function orderMillis(ts) {
+  // a just-written server timestamp is still null locally, so treat it as "now"
+  return ts && ts.toMillis ? ts.toMillis() : Date.now();
+}
+
+function orderDateText(ts) {
+  const d = new Date(orderMillis(ts));
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) +
+    ' • ' + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+}
+
+function isToday(ms) {
+  return new Date(ms).toDateString() === new Date().toDateString();
+}
+
+function listenToOrders(uid) {
+
+  if (ordersUnsub) ordersUnsub();
+
+  // Single-field query on purpose, so no composite index is needed.
+  // Sorting is done here in the browser.
+  ordersUnsub = db
+    .collection('orders')
+    .where('canteenId', '==', uid)
+    .onSnapshot(
+      (snap) => {
+        if (ordersLoaded) {
+          snap.docChanges().forEach(ch => {
+            if (ch.type === 'added' && ch.doc.data().status === 'pending' && !ch.doc.metadata.hasPendingWrites) {
+              showToast('New order received!');
+            }
+          });
+        }
+        ordersLoaded = true;
+
+        orders = snap.docs
+          .map(d => ({ id: d.id, ...d.data() }))
+          .sort((a, b) => orderMillis(b.createdAt) - orderMillis(a.createdAt));
+
+        renderOrders();
+        renderOrderStats();
+        renderRecentOrders();
+        renderReports();
+        renderNotifications();
+      },
+      (err) => {
+        console.error(err);
+        showToast('Could not load orders.');
+      }
+    );
+}
+
+function orderCardHtml(o, withActions) {
+
+  const items = (o.items || []).map(i => `
+    <li>
+      <span class="ord-qty">${Number(i.qty || 0)}×</span>
+      <span class="ord-name">${escapeHtml(i.name || 'Item')}</span>
+      <span class="ord-line">${pesos(Number(i.price || 0) * Number(i.qty || 0))}</span>
+    </li>`).join('');
+
+  const next = NEXT_STATUS[o.status];
+  const canCancel = ACTIVE_STATUSES.includes(o.status);
+
+  const actions = withActions && (next || canCancel) ? `
+    <div class="ord-actions">
+      ${next ? `<button type="button" class="btn btn-green btn-sm" onclick="updateOrderStatus('${o.id}', '${next.to}')">${next.label}</button>` : ''}
+      ${canCancel ? `<button type="button" class="btn btn-danger btn-sm" onclick="cancelOrder('${o.id}')">Cancel</button>` : ''}
+    </div>` : '';
+
+  return `
+    <article class="ord-card">
+      <div class="ord-head">
+        <div>
+          <strong>#${escapeHtml(o.id.slice(0, 6).toUpperCase())}</strong>
+          <span class="ord-student">${escapeHtml(o.studentName || 'Student')}</span>
+        </div>
+        <span class="ord-badge ${escapeHtml(o.status || 'pending')}">${escapeHtml(STATUS_LABELS[o.status] || o.status || 'Pending')}</span>
+      </div>
+      <ul class="ord-items">${items}</ul>
+      <div class="ord-foot">
+        <span class="ord-time">${escapeHtml(orderDateText(o.createdAt))}</span>
+        <span class="ord-total">Total: <b>${pesos(o.total)}</b></span>
+      </div>
+      ${actions}
+    </article>`;
+}
+
+function renderOrders() {
+
+  const active = orders.filter(o => ACTIVE_STATUSES.includes(o.status));
+  const past = orders.filter(o => !ACTIVE_STATUSES.includes(o.status));
+
+  const listEl = document.getElementById('orders-list');
+  if (listEl) {
+    listEl.innerHTML = active.length
+      ? `<div class="ord-grid">${active.map(o => orderCardHtml(o, true)).join('')}</div>`
+      : '<div class="empty-state"><svg><use href="#i-inbox"></use></svg>No active orders yet.</div>';
+  }
+
+  const histEl = document.getElementById('history-list');
+  if (histEl) {
+    histEl.innerHTML = past.length
+      ? `<div class="ord-grid">${past.map(o => orderCardHtml(o, false)).join('')}</div>`
+      : '<div class="empty-state"><svg><use href="#i-inbox"></use></svg>No order history yet.</div>';
+  }
+
+  const activeCount = document.getElementById('orders-active-count');
+  if (activeCount) activeCount.textContent = `${active.length} active`;
+
+  const histCount = document.getElementById('history-count');
+  if (histCount) histCount.textContent = `${past.length} order${past.length === 1 ? '' : 's'}`;
+
+  // small badge on the sidebar for orders waiting to be accepted
+  const pending = orders.filter(o => o.status === 'pending').length;
+  const badge = document.getElementById('nav-orders-count');
+  if (badge) {
+    badge.textContent = pending;
+    badge.style.display = pending ? 'inline-flex' : 'none';
+  }
+}
+
+function renderOrderStats() {
+
+  const setStat = (id, value) => {
+    const el = document.querySelector(`#${id} .stat-card-value`);
+    if (el) el.textContent = value;
+  };
+
+  const todays = orders.filter(o => isToday(orderMillis(o.createdAt)));
+  const completedToday = orders.filter(o => o.status === 'completed' && isToday(orderMillis(o.updatedAt)));
+
+  setStat('stat-today', todays.length);
+  setStat('stat-pending', orders.filter(o => o.status === 'pending' || o.status === 'confirmed').length);
+  setStat('stat-preparing', orders.filter(o => o.status === 'preparing').length);
+  setStat('stat-ready', orders.filter(o => o.status === 'ready').length);
+  setStat('stat-completed', completedToday.length);
+  setStat('stat-sales', pesos(completedToday.reduce((sum, o) => sum + Number(o.total || 0), 0)));
+}
+
+function renderRecentOrders() {
+
+  const el = document.getElementById('recent-orders');
+  if (!el) return;
+
+  const recent = orders.slice(0, 5);
+
+  el.innerHTML = recent.length
+    ? `<div class="ord-grid">${recent.map(o => orderCardHtml(o, false)).join('')}</div>`
+    : '<div class="empty-state"><svg><use href="#i-inbox"></use></svg>No orders yet.</div>';
+}
+
+async function updateOrderStatus(orderId, status, extra) {
+
+  try {
+    await db.collection('orders').doc(orderId).update({
+      status,
+      ...(extra || {}),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    showToast(`Order marked as ${STATUS_LABELS[status] || status}.`);
+  } catch (err) {
+    console.error(err);
+    showToast('Could not update the order. Please try again.');
+  }
+}
+
+async function cancelOrder(orderId) {
+
+  if (!confirm('Cancel this order?')) return;
+
+  await updateOrderStatus(orderId, 'cancelled', { cancelledBy: 'canteen' });
+}
+
+
+/* ============ SALES & REPORTS (built from the orders above) ============ */
+
+function setReportRange(value) {
+  reportRange = value;
+  renderReports();
+}
+
+function localDayKey(ms) {
+  const d = new Date(ms);
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+function reportStart() {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const DAY = 24 * 60 * 60 * 1000;
+  if (reportRange === 'today') return today;
+  if (reportRange === '7d') return today - 6 * DAY;
+  if (reportRange === '30d') return today - 29 * DAY;
+  return 0;
+}
+
+function reportBuckets(completed, start) {
+
+  const now = new Date();
+  const DAY = 24 * 60 * 60 * 1000;
+  const buckets = [];
+
+  if (reportRange === 'today') {
+    for (let h = 0; h < 24; h++) {
+      const label = (h % 3 === 0) ? ((h % 12 || 12) + (h < 12 ? 'a' : 'p')) : '';
+      buckets.push({ key: h, label, title: (h % 12 || 12) + (h < 12 ? ' AM' : ' PM'), value: 0 });
+    }
+    completed.forEach(o => { buckets[new Date(orderMillis(o.updatedAt)).getHours()].value += Number(o.total || 0); });
+    return { buckets, heading: 'Sales by hour (today)' };
+  }
+
+  if (reportRange === '7d' || reportRange === '30d') {
+    const days = reportRange === '7d' ? 7 : 30;
+    const map = {};
+    for (let i = 0; i < days; i++) {
+      const d = new Date(start + i * DAY);
+      const b = {
+        key: localDayKey(d.getTime()),
+        label: (days === 7 || i % 5 === 0 || i === days - 1)
+          ? (days === 7 ? d.toLocaleDateString('en-US', { weekday: 'short' }) : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }))
+          : '',
+        title: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        value: 0
+      };
+      map[b.key] = b;
+      buckets.push(b);
+    }
+    completed.forEach(o => {
+      const b = map[localDayKey(orderMillis(o.updatedAt))];
+      if (b) b.value += Number(o.total || 0);
+    });
+    return { buckets, heading: `Daily sales (last ${days} days)` };
+  }
+
+  // all time -> last 12 months
+  const map = {};
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+    const b = {
+      key,
+      label: d.toLocaleDateString('en-US', { month: 'short' }),
+      title: d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+      value: 0
+    };
+    map[key] = b;
+    buckets.push(b);
+  }
+  completed.forEach(o => {
+    const d = new Date(orderMillis(o.updatedAt));
+    const b = map[d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0')];
+    if (b) b.value += Number(o.total || 0);
+  });
+  return { buckets, heading: 'Monthly sales (last 12 months)' };
+}
+
+function renderReports() {
+
+  const chartEl = document.getElementById('rep-chart');
+  if (!chartEl) return;
+
+  const start = reportStart();
+  const completed = orders.filter(o => o.status === 'completed' && orderMillis(o.updatedAt) >= start);
+  const cancelled = orders.filter(o => o.status === 'cancelled' && orderMillis(o.updatedAt) >= start);
+  const placed = orders.filter(o => orderMillis(o.createdAt) >= start);
+
+  const total = completed.reduce((sum, o) => sum + Number(o.total || 0), 0);
+  const avg = completed.length ? total / completed.length : 0;
+
+  const setStat = (id, value) => {
+    const el = document.querySelector(`#${id} .stat-card-value`);
+    if (el) el.textContent = value;
+  };
+  setStat('rep-sales', pesos(total));
+  setStat('rep-completed', completed.length);
+  setStat('rep-avg', pesos(avg));
+  setStat('rep-cancelled', cancelled.length);
+
+  // ---- chart ----
+  const { buckets, heading } = reportBuckets(completed, start);
+  document.getElementById('rep-chart-title').textContent = heading;
+
+  const max = Math.max(...buckets.map(b => b.value), 0);
+  if (max === 0) {
+    chartEl.innerHTML = '<div class="empty-state"><svg><use href="#i-chart"></use></svg>No sales in this period yet.</div>';
+  } else {
+    chartEl.innerHTML = `<div class="rep-chart">${buckets.map(b => `
+      <div class="rep-col" title="${escapeHtml(b.title)}: ${pesos(b.value)}">
+        <div class="rep-bar-wrap"><div class="rep-bar" style="height:${Math.max(b.value / max * 100, b.value ? 3 : 0)}%"></div></div>
+        <span class="rep-label">${escapeHtml(b.label)}</span>
+      </div>`).join('')}</div>`;
+  }
+
+  // ---- top selling items ----
+  const tally = {};
+  completed.forEach(o => (o.items || []).forEach(i => {
+    const key = i.menuItemId || i.name;
+    if (!tally[key]) tally[key] = { name: i.name || 'Item', qty: 0, revenue: 0 };
+    tally[key].qty += Number(i.qty || 0);
+    tally[key].revenue += Number(i.qty || 0) * Number(i.price || 0);
+  }));
+  const top = Object.values(tally).sort((a, b) => b.qty - a.qty).slice(0, 5);
+  const topEl = document.getElementById('rep-top-items');
+  topEl.innerHTML = top.length
+    ? top.map((t, idx) => `
+      <div class="rep-row">
+        <div class="rep-row-head"><span>${idx + 1}. ${escapeHtml(t.name)}</span><b>${t.qty} sold</b></div>
+        <div class="rep-meter"><span style="width:${t.qty / top[0].qty * 100}%"></span></div>
+        <small>${pesos(t.revenue)}</small>
+      </div>`).join('')
+    : '<div class="empty-state"><svg><use href="#i-food"></use></svg>No items sold yet.</div>';
+
+  // ---- orders by status ----
+  const statuses = ['pending', 'confirmed', 'preparing', 'ready', 'completed', 'cancelled'];
+  const counts = statuses.map(st => ({ st, n: placed.filter(o => o.status === st).length })).filter(x => x.n > 0);
+  const statusEl = document.getElementById('rep-status');
+  statusEl.innerHTML = counts.length
+    ? counts.map(x => `
+      <div class="rep-row">
+        <div class="rep-row-head"><span>${escapeHtml(STATUS_LABELS[x.st])}</span><b>${x.n}</b></div>
+        <div class="rep-meter ${x.st}"><span style="width:${x.n / placed.length * 100}%"></span></div>
+      </div>`).join('')
+    : '<div class="empty-state"><svg><use href="#i-inbox"></use></svg>No orders in this period yet.</div>';
+}
+
+function exportSalesCsv() {
+
+  const start = reportStart();
+  const rows = orders.filter(o => o.status === 'completed' && orderMillis(o.updatedAt) >= start);
+
+  if (rows.length === 0) { showToast('There are no completed orders to export.'); return; }
+
+  const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+  const lines = [['Order ID', 'Completed', 'Student', 'Items', 'Total'].map(q).join(',')];
+
+  rows.forEach(o => {
+    const items = (o.items || []).map(i => `${i.qty}x ${i.name}`).join('; ');
+    lines.push([o.id, new Date(orderMillis(o.updatedAt)).toLocaleString('en-US'), o.studentName || 'Student', items, Number(o.total || 0).toFixed(2)].map(q).join(','));
+  });
+
+  const blob = new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `sales-${localDayKey(Date.now())}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+
+/* ============ STUDENT SUGGESTIONS (students' "Share Your Suggestion") ============ */
+
+const SUGGESTION_ACTIONS = [
+  { to: 'reviewed', label: 'Mark Reviewed' },
+  { to: 'accepted', label: 'Accept' },
+  { to: 'rejected', label: 'Reject' }
+];
+
+function listenToSuggestions(uid) {
+
+  if (suggestionsUnsub) suggestionsUnsub();
+
+  suggestionsUnsub = db
+    .collection('suggestions')
+    .where('canteenId', '==', uid)
+    .onSnapshot(
+      (snap) => {
+        suggestions = snap.docs
+          .map(d => ({ id: d.id, ...d.data() }))
+          .sort((a, b) => orderMillis(b.createdAt) - orderMillis(a.createdAt));
+
+        renderSuggestions();
+        renderNotifications();
+      },
+      (err) => {
+        console.error(err);
+        showToast('Could not load suggestions.');
+      }
+    );
+}
+
+function setSuggestionFilter(value) {
+  suggestionFilter = value;
+  document.querySelectorAll('#sugg-filters .sugg-filter').forEach(b => {
+    b.classList.toggle('active', b.dataset.sugg === value);
+  });
+  renderSuggestions();
+}
+
+function timeAgoText(ms) {
+  const diff = Math.max(0, Date.now() - ms);
+  const min = Math.floor(diff / 60000);
+  if (min < 1) return 'Just now';
+  if (min < 60) return `${min} min ago`;
+  const hr = Math.floor(min / 60);
+  if (hr < 24) return `${hr} hr ago`;
+  const day = Math.floor(hr / 24);
+  if (day < 7) return `${day} day${day === 1 ? '' : 's'} ago`;
+  return new Date(ms).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function renderSuggestions() {
+
+  const listEl = document.getElementById('suggestions-list');
+  if (!listEl) return;
+
+  const shown = suggestionFilter === 'all'
+    ? suggestions
+    : suggestions.filter(s => (s.status || 'pending') === suggestionFilter);
+
+  const countEl = document.getElementById('sugg-count');
+  if (countEl) countEl.textContent = `${suggestions.length} suggestion${suggestions.length === 1 ? '' : 's'}`;
+
+  listEl.innerHTML = shown.length
+    ? `<div class="sugg-list">${shown.map(s => {
+        const status = s.status || 'pending';
+        const buttons = SUGGESTION_ACTIONS
+          .filter(a => a.to !== status)
+          .map(a => `<button type="button" class="btn btn-sm ${a.to === 'accepted' ? 'btn-green' : (a.to === 'rejected' ? 'btn-danger' : 'btn-ghost')}" onclick="updateSuggestionStatus('${s.id}', '${a.to}')">${a.label}</button>`)
+          .join('');
+        return `
+          <article class="sugg-card">
+            <div class="ord-head">
+              <div>
+                <strong>${escapeHtml(s.studentName || 'Student')}</strong>
+                <span class="ord-student">${escapeHtml(timeAgoText(orderMillis(s.createdAt)))}</span>
+              </div>
+              <span class="ord-badge sugg-${escapeHtml(status)}">${escapeHtml(status.charAt(0).toUpperCase() + status.slice(1))}</span>
+            </div>
+            <p class="sugg-msg">${escapeHtml(s.message || '')}</p>
+            <div class="ord-actions">${buttons}</div>
+          </article>`;
+      }).join('')}</div>`
+    : `<div class="empty-state"><svg><use href="#i-inbox"></use></svg>${suggestions.length ? 'No suggestions match this filter.' : 'No suggestions yet.'}</div>`;
+
+  const pending = suggestions.filter(s => (s.status || 'pending') === 'pending').length;
+  const badge = document.getElementById('nav-suggestions-count');
+  if (badge) {
+    badge.textContent = pending;
+    badge.style.display = pending ? 'inline-flex' : 'none';
+  }
+}
+
+async function updateSuggestionStatus(id, status) {
+
+  try {
+    await db.collection('suggestions').doc(id).update({
+      status,
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    showToast(`Suggestion marked as ${status}.`);
+  } catch (err) {
+    console.error(err);
+    showToast('Could not update the suggestion. Please try again.');
+  }
+}
+
+
+/* ============ NOTIFICATIONS (built from orders + suggestions) ============ */
+/* No extra Firestore rules needed: the feed is computed from data the canteen
+   can already read. "Read" state is remembered in this browser only. */
+
+function notifSeenKey() { return 'canteenNotifSeen:' + currentUid; }
+
+function getNotifSeen() {
+  try { return Number(localStorage.getItem(notifSeenKey())) || 0; } catch (e) { return 0; }
+}
+
+function buildNotifications() {
+
+  const list = [];
+
+  orders.forEach(o => {
+    const code = '#' + o.id.slice(0, 6).toUpperCase();
+    const name = o.studentName || 'A student';
+    const qty = (o.items || []).reduce((sum, i) => sum + Number(i.qty || 0), 0);
+
+    list.push({
+      ts: orderMillis(o.createdAt), kind: 'order', view: 'orders-view',
+      title: `New order ${code}`,
+      text: `${name} ordered ${qty} item${qty === 1 ? '' : 's'} (${pesos(o.total)}).`
+    });
+
+    if (o.status === 'cancelled' && o.cancelledBy !== 'canteen') {
+      list.push({
+        ts: orderMillis(o.updatedAt), kind: 'cancel', view: 'history-view',
+        title: `Order ${code} cancelled`,
+        text: `${name} cancelled this order.`
+      });
+    }
+  });
+
+  suggestions.forEach(s => {
+    list.push({
+      ts: orderMillis(s.createdAt), kind: 'suggestion', view: 'suggestions-view',
+      title: 'New student suggestion',
+      text: `${s.studentName || 'A student'}: ${(s.message || '').slice(0, 90)}${(s.message || '').length > 90 ? '…' : ''}`
+    });
+  });
+
+  return list.sort((a, b) => b.ts - a.ts).slice(0, 50);
+}
+
+function renderNotifications() {
+
+  const listEl = document.getElementById('notif-list');
+  if (!listEl) return;
+
+  const feed = buildNotifications();
+  const seen = getNotifSeen();
+  const unread = feed.filter(n => n.ts > seen).length;
+
+  const icons = { order: 'i-package', cancel: 'i-x', suggestion: 'i-bulb' };
+
+  listEl.innerHTML = feed.length
+    ? `<ul class="notif-feed">${feed.map(n => `
+        <li class="notif-item ${n.ts > seen ? 'unread' : ''}" onclick="openNotification('${n.view}')">
+          <span class="notif-icon ${n.kind}"><svg><use href="#${icons[n.kind]}"></use></svg></span>
+          <span class="notif-body">
+            <strong>${escapeHtml(n.title)}</strong>
+            <span>${escapeHtml(n.text)}</span>
+          </span>
+          <span class="notif-time">${escapeHtml(timeAgoText(n.ts))}</span>
+        </li>`).join('')}</ul>`
+    : '<div class="empty-state"><svg><use href="#i-bell"></use></svg>No notifications yet.</div>';
+
+  const badge = document.getElementById('nav-notif-count');
+  if (badge) {
+    badge.textContent = unread;
+    badge.style.display = unread ? 'inline-flex' : 'none';
+  }
+}
+
+function markNotificationsRead() {
+  try { localStorage.setItem(notifSeenKey(), String(Date.now())); } catch (e) { /* private mode: ignore */ }
+  renderNotifications();
+}
+
+function openNotification(viewId) {
+  showView(viewId, document.querySelector(`[data-view="${viewId}"]`));
 }
 
 
@@ -1178,7 +1784,7 @@ async function toggleAvailability(
     console.error(err);
 
     showToast(
-      'Hindi na-update ang availability.'
+      'Could not update availability.'
     );
   }
 }
@@ -1234,7 +1840,7 @@ function handleFoodImageUpload(event) {
 
     showFormError(
       errorEl,
-      'PNG o JPG lang ang tinatanggap na image.'
+      'Only PNG or JPG images are accepted.'
     );
 
     event.target.value = '';
@@ -1248,7 +1854,7 @@ function handleFoodImageUpload(event) {
 
     showFormError(
       errorEl,
-      'Masyadong malaki ang image. 5MB max lang.'
+      'Image is too large. Maximum size is 5MB.'
     );
 
     event.target.value = '';
@@ -1312,7 +1918,7 @@ function handleFoodImageUpload(event) {
 
       showFormError(
         errorEl,
-        'Hindi ma-process ang image na ito. Subukan ng ibang file.'
+        'Could not process this image. Try a different file.'
       );
     };
 
@@ -1323,7 +1929,7 @@ function handleFoodImageUpload(event) {
 
     showFormError(
       errorEl,
-      'Hindi ma-upload ang image. Subukan ulit.'
+      'Could not upload the image. Please try again.'
     );
   };
 
@@ -1432,8 +2038,8 @@ function openFoodModal(item, mode) {
       )
       .textContent =
       resolvedMode === 'view'
-        ? 'Detalye ng food item na ito.'
-        : 'I-update ang detalye ng food item na ito.';
+        ? 'Details of this food item.'
+        : 'Update the details of this food item.';
 
 
     document
@@ -1500,7 +2106,7 @@ function openFoodModal(item, mode) {
         'food-modal-subtitle'
       )
       .textContent =
-      'Ilagay ang detalye ng food item na ilalagay sa iyong menu.';
+      'Enter the details of the food item to add to your menu.';
 
 
     document
@@ -1636,7 +2242,7 @@ async function saveFood(event) {
 
     showFormError(
       errorEl,
-      'Kumpletuhin ang pangalan, price, at stock (di dapat negative).'
+      'Please complete the name, price and stock (values must not be negative).'
     );
 
     return false;
@@ -1683,7 +2289,7 @@ async function saveFood(event) {
   if (id) {
 
     showToast(
-      'Na-update ang food item!'
+      'Food item updated!'
     );
 
     db
@@ -1695,7 +2301,7 @@ async function saveFood(event) {
         console.error(err);
 
         showToast(
-          'Hindi na-sync ang pagbabago. Suriin ang connection at subukan ulit.'
+          'Could not sync your changes. Check your connection and try again.'
         );
       });
 
@@ -1705,7 +2311,7 @@ async function saveFood(event) {
       firebase.firestore.FieldValue.serverTimestamp();
 
     showToast(
-      'Naidagdag ang food item!'
+      'Food item added!'
     );
 
     db
@@ -1716,7 +2322,7 @@ async function saveFood(event) {
         console.error(err);
 
         showToast(
-          'Hindi na-sync ang bagong item. Suriin ang connection at subukan ulit.'
+          'Could not sync the new item. Check your connection and try again.'
         );
       });
   }
@@ -1735,7 +2341,7 @@ async function deleteFood(
 
   if (
     !confirm(
-      `Alisin ang "${name}" sa menu? Hindi na ito mababawi.`
+      `Remove "${name}" from the menu? This cannot be undone.`
     )
   ) {
     return;
@@ -1751,7 +2357,7 @@ async function deleteFood(
 
 
     showToast(
-      'Naalis ang food item.'
+      'Food item removed.'
     );
 
   } catch (err) {
@@ -1759,7 +2365,7 @@ async function deleteFood(
     console.error(err);
 
     showToast(
-      'Hindi na-delete ang food item.'
+      'Could not delete the food item.'
     );
   }
 }
