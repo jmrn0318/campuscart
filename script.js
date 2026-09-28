@@ -920,6 +920,8 @@ async function studentLogin(event) {
   );
 
 
+  let redirecting = false;
+
   try {
 
     const cred =
@@ -929,14 +931,14 @@ async function studentLogin(event) {
       );
 
 
-    showToast(
+    // Keep the login form up + cover the page until the dashboard loads,
+    // so the landing page never flashes in between.
+    redirecting = true;
+    showRedirectCover(
       `Welcome back, ${cred.user.displayName || 'Student'}!`
     );
 
-
-    closeAllOverlays();
-
-    window.location.href = 'Student/student-dashboard.html';
+    window.location.replace('Student/student-dashboard.html');
 
   } catch (err) {
 
@@ -947,7 +949,7 @@ async function studentLogin(event) {
 
   } finally {
 
-    resetButtonLoading(
+    if (!redirecting) resetButtonLoading(
       btn,
       'Login'
     );
@@ -2019,6 +2021,8 @@ async function canteenLogin(event) {
   );
 
 
+  let redirecting = false;
+
   try {
 
     const cred =
@@ -2028,14 +2032,14 @@ async function canteenLogin(event) {
       );
 
 
-    showToast(
+    // Keep the login form up + cover the page until the dashboard loads,
+    // so the landing page never flashes in between.
+    redirecting = true;
+    showRedirectCover(
       `Welcome back, ${cred.user.displayName || 'Canteen'}!`
     );
 
-
-    closeAllOverlays();
-
-    window.location.href = 'Canteen/canteen-dashboard.html';
+    window.location.replace('Canteen/canteen-dashboard.html');
 
 
   } catch (err) {
@@ -2048,7 +2052,7 @@ async function canteenLogin(event) {
 
   } finally {
 
-    resetButtonLoading(
+    if (!redirecting) resetButtonLoading(
       btn,
       'Login'
     );
@@ -2722,3 +2726,29 @@ if ('serviceWorker' in navigator) {
       .catch((err) => console.log('SW registration failed:', err));
   });
 }
+
+/* ============ REDIRECT COVER (after successful login) ============ */
+
+function showRedirectCover(message) {
+
+  let cover = document.getElementById('redirect-cover');
+
+  if (!cover) {
+    cover = document.createElement('div');
+    cover.id = 'redirect-cover';
+    cover.innerHTML =
+      '<div class="redirect-spinner"></div>' +
+      '<p class="redirect-msg"></p>' +
+      '<p class="redirect-sub">Opening your dashboard…</p>';
+    document.body.appendChild(cover);
+  }
+
+  cover.querySelector('.redirect-msg').textContent = message;
+  cover.classList.add('show');
+}
+
+// If the user comes back with the browser's Back button, make sure the cover is gone.
+window.addEventListener('pageshow', () => {
+  const cover = document.getElementById('redirect-cover');
+  if (cover) cover.classList.remove('show');
+});
